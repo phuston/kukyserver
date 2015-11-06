@@ -2,18 +2,18 @@ var express = require('express');
 var router = express.Router();
 
 /* GET all posts */
-router.get('/all', function(req, res, next) {
-	var post1 = {
-		"_id":1000,
-		"kukontent":["Haikus are easy","They take almost no effort", "Refrigerator"],
-		"username":"Patrick"
-	};
-	var post2 = {
-		"_id":1001,
-		"kukontent":["Haikus are stupid","They take a lot of effort", "Byron S Wasti"],
-		"username":"Patrick"
-	};
-	res.json(post1)
+router.get('/all/top', function(req, res, next) {
+    // TODO: Get all the posts, order them in 'best' order
+    res.send("Under development");
+});
+
+router.get('/all/new', function(req, res, next) {
+    // TODO: Get all the posts, order them in the correct order.
+    res.send("Under development");  
+});
+
+router.post('/new', function(req, res, next) {
+    res.send(req.body);
 });
 
 module.exports = router;
