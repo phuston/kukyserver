@@ -8,7 +8,7 @@
   },
   "production": {
     "username": "root",
-    "password": "mU1rwO0D5",
+    "password": "kukyserver",
     "database": "kuky",
     "host": "159.203.136.99",
     "dialect": "mariadb"
