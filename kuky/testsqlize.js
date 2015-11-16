@@ -25,7 +25,7 @@ var Comments = sequelize.define("Comments", {
         }
     },
     instanceMethods: {
-        getComment: function() {
+        getData: function() {
             return this.Content;
         }
     }
@@ -42,6 +42,6 @@ function ShowAll() {
 
 
 Comments.findById(1).then(function(comment) {
-    console.log(comment.getComment());
+    console.log(comment.getData());
 })
 

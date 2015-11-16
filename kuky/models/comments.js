@@ -1,18 +1,21 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var User = sequelize.define("User", {
-    username: {
+  var Comment = sequelize.define("Comment", {
+    content: {
         type: DataTypes.STRING, 
         allowNull: false}, 
-    score: {
+    upvotes: {
+        type: DataTypes.INTEGER, 
+        allowNull: false, 
+        defaultValue: 0, 
+        validate: {isInt: true}}, 
+    downvotes: {
         type: DataTypes.INTEGER, 
         allowNull: false, 
         defaultValue: 0, 
         validate: {isInt: true}}
-    // password: DataTypes.INTEGER,
-    // api_key: ?
   });
 
-  return User;
+  return Comment;
 };
