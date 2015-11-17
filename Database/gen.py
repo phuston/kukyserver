@@ -20,17 +20,19 @@ haikus = [['hello there patrick', 'this is a test oh boy yes', 'slowly passing g
 		  ['fuck shit goddamnit', 'motherfucking shit ow ow', 'fuck shit fuck fuck fuck', 4]]
 
 
-comments = ['this shit sucks', 'I love you', 'This is okay', 'ur so clevar', 'marry me', 'u fokken wot m8', 'check me', 'I blue myself', 'This is a test', 'This is another test', 'this is the last test']
+comments = ['this shit sucks', 'I love you', 'This is okay', 'ur so clevar', 'marry me', 
+'u fokken wot m8', 'check me', 'I blue myself', 'This is a test', 'This is another test', 
+'this is the last test']
 
 
 for user in usernames:
-	print "INSERT INTO Users(Username, Score) VALUES (\'{}\', {});".format(user, 0)
+	print "INSERT INTO Users(Username, Score, createdAt, updatedAt) VALUES (\'{}\', {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(user, 0)
 
 
 for ku in haikus:
 	ku_text = ';'.join(ku[0:3])
-	print "INSERT INTO Kus(Content, Upvotes, Downvotes, Time, Lat, Lon) VALUES (\"{}\", {}, {}, CURRENT_TIMESTAMP, {}, {});".format(ku_text, 0, 0, lat, lon)
-	print "INSERT INTO Ku_user VALUES ({}, LAST_INSERT_ID(), 0);".format(ku[3])
+	print "INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES (\"{}\", {}, {}, {}, {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(ku_text, 0, 0, lat, lon)
+	print "INSERT INTO Ku_users VALUES ({}, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(ku[3])
 
 for index, ku in enumerate(haikus):
 	ku_id = index+1
@@ -38,8 +40,8 @@ for index, ku in enumerate(haikus):
 
 	for comment in rand_comments:
 		user_id = random.randint(1, len(usernames))
-		print "INSERT INTO Comments(Content, Upvotes, Downvotes) VALUES (\'{}\', {}, {});".format(comment, 0, 0)
-		print "INSERT INTO Ku_comment_user VALUES ({}, LAST_INSERT_ID(), {});".format(user_id, ku_id)
+		print "INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES (\'{}\', {}, {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(comment, 0, 0)
+		print "INSERT INTO Ku_comment_users VALUES ({}, LAST_INSERT_ID(), {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(user_id, ku_id)
 
 
 
