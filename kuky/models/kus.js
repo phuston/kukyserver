@@ -29,6 +29,16 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.FLOAT, 
         allowNull: false, 
         validate: {max: 180, min: -180, isFloat: true}}
+  }, {
+      instanceMethods: {
+          getDataForUser: function() {
+              return {
+                  "content": this.content,
+                  "upvotes": this.upvotes,
+                  "downvotes": this.downvotes
+              }
+          }
+      }
   });
 
   return Ku;

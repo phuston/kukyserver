@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var models  = require('../models');
-var app = express();
 
 var User = models.sequelize.models.User;
 var Ku = models.sequelize.models.Ku;
@@ -9,7 +8,7 @@ var Ku_user = models.sequelize.models.Ku_user;
 
 var responseLimit = 50;
 
-/* GET all posts in new order */
+/* GET all kus in new order */
 router.get('/all/recent', function (req, res, next) {
 	Ku.findAll({
 		where: {
@@ -27,6 +26,7 @@ router.get('/all/recent', function (req, res, next) {
 	});
 });
 
+/* GET all kus in best voted order */
 router.get('/all/hot', function(req, res, next) {
 	Ku.findAll({
         limit: responseLimit
@@ -40,6 +40,7 @@ router.get('/all/hot', function(req, res, next) {
 	});
 });
 
+/* POST a newly composed ku */
 router.post('/new/composed', function (req, res, next) {
     var returnObject = {}
     
@@ -50,20 +51,19 @@ router.post('/new/composed', function (req, res, next) {
             lon: req.body.Lon
         }, {transaction: t}).then(function (ku) {
             returnObject.ku = ku.dataValues;
-            console.log(req.body.User_id);
-            console.log(ku.dataValues.id);
             return Ku_user.create({
                 user_id: req.body.User_id,
                 ku_id: ku.dataValues.id
             }, {transaction: t});
         });
     }).then(function (result) {
-        res.send(returnObject);
+        res.json(returnObject);
     }).catch(function (error) {
         console.log(error);
     })
 })
 
+/* POST a newly favorited ku */
 router.post('/new/favorited', function (req, res, next) {
     Ku_user.create({
         user_id: req.body.User_id,
@@ -76,6 +76,7 @@ router.post('/new/favorited', function (req, res, next) {
     })
 })
 
+/* POST an upvote to an existing ku */
 router.post('/upvote', function (req, res, next) {
     Ku.findById(req.body.Ku_id).then(function (ku) {
         ku.increment('upvotes');
@@ -83,11 +84,14 @@ router.post('/upvote', function (req, res, next) {
     })
 })
 
+/* POST a downvote to an existing ku */
 router.post('/downvote', function (req, res, next) {
     Ku.findById(req.body.Ku_id).then(function (ku) {
         ku.increment('downvotes');
         res.send("Confirmed");
     })
 })
+
+/* DELETE an existing ku */
 
 module.exports = router;
