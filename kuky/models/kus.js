@@ -9,12 +9,18 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.INTEGER, 
         allowNull: false, 
         defaultValue: 0, 
-        validate: {isInt: true}},
+        validate: {isInt: true},
+        increment: function() {
+            this.setDataValue('upvotes', this.getDataValues('upvotes')+1);
+        }},
     downvotes: {
         type: DataTypes.INTEGER, 
         allowNull: false, 
         defaultValue: 0, 
-        validate: {isInt: true}},
+        validate: {isInt: true},
+        increment: function() {
+            this.setDataValue('downvotes', this.getDataValues('downvotes')+1);
+        }},
     lat: {
         type: DataTypes.FLOAT, 
         allowNull: false, 

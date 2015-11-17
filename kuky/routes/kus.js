@@ -76,11 +76,18 @@ router.post('/new/favorited', function (req, res, next) {
     })
 })
 
-// router.post('/downvote', function (req, res, next) {
-//     Ku.findById(req.body.Ku_id)
-//         .then(function (ku) {
-//             ku.
-//         })
-// })
+router.post('/upvote', function (req, res, next) {
+    Ku.findById(req.body.Ku_id).then(function (ku) {
+        ku.increment('upvotes');
+        res.send("Confirmed");
+    })
+})
+
+router.post('/downvote', function (req, res, next) {
+    Ku.findById(req.body.Ku_id).then(function (ku) {
+        ku.increment('downvotes');
+        res.send("Confirmed");
+    })
+})
 
 module.exports = router;
