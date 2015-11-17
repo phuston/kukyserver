@@ -19,8 +19,7 @@ module.exports = function(sequelize, DataTypes) {
     is_favorite: {
         type: DataTypes.BOOLEAN, 
         allowNull: false, 
-        validate: {isIn: [0, 1]}, 
-        defaultValue: 0}
+        defaultValue: false}
   });
 
   return K_user;
