@@ -1,159 +1,296 @@
-DROP TABLE IF EXISTS Ku_user;
-DROP TABLE IF EXISTS Ku_comment_user;
+DROP TABLE IF EXISTS Ku_users;
+DROP TABLE IF EXISTS Ku_comment_users;
 DROP TABLE IF EXISTS Kus;
+DROP TABLE IF EXISTS User_auths;
 DROP TABLE IF EXISTS Comments;
 DROP TABLE IF EXISTS Users;
 
 CREATE TABLE Kus (
-	ID int NOT NULL AUTO_INCREMENT,
-	Content varchar(255) NOT NULL,
-	Upvotes int NOT NULL,
-	Downvotes int NOT NULL, 
-	Lat float NOT NULL,
-	Lon float NOT NULL,
+	id int NOT NULL AUTO_INCREMENT,
+	content varchar(255) NOT NULL,
+	upvotes int NOT NULL,
+	downvotes int NOT NULL, 
+	lat float NOT NULL,
+	lon float NOT NULL,
     createdAt timestamp NOT NULL,
     updatedAt timestamp NOT NULL,
-	PRIMARY KEY (ID)
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE Comments (
-	ID int NOT NULL AUTO_INCREMENT,
-	Content varchar(255) NOT NULL,
-	Upvotes int NOT NULL,
-	Downvotes int NOT NULL,
+	id int NOT NULL AUTO_INCREMENT,
+	content varchar(255) NOT NULL,
+	upvotes int NOT NULL,
+	downvotes int NOT NULL,
     createdAt timestamp NOT NULL,
     updatedAt timestamp NOT NULL,
-	PRIMARY KEY (ID)
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE Users (
-	ID int NOT NULL AUTO_INCREMENT,
-	Username varchar(20) NOT NULL,
-	Score int NOT NULL,
+	id int NOT NULL AUTO_INCREMENT,
+	username varchar(20) NOT NULL,
+	score int NOT NULL,
+    radiusLimit float,
     createdAt timestamp NOT NULL,
     updatedAt timestamp NOT NULL,
-	PRIMARY KEY (ID)
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE Ku_comment_users (
-	User_id int,
-	Comment_id int,
-	Ku_id int,
-	FOREIGN KEY (User_id) REFERENCES Users(ID),
-	FOREIGN KEY (Comment_id) REFERENCES Comments(ID),
-	FOREIGN KEY (Ku_id) REFERENCES Kus(ID),
+	userId int NOT NULL,
+	commentId int NOT NULL,
+	kuId int NOT NULL,
+    isOp boolean NOT NULL,
+	FOREIGN KEY (userId) REFERENCES Users(id),
+	FOREIGN KEY (commentId) REFERENCES Comments(id),
+	FOREIGN KEY (kuId) REFERENCES Kus(id),
+    PRIMARY KEY (commentId),
     createdAt timestamp NOT NULL,
     updatedAt timestamp NOT NULL
 );
 
 CREATE TABLE Ku_users (
-	User_id int,
-	Ku_id int,
-	Is_favorite boolean,
-	FOREIGN KEY (User_id) REFERENCES Users(ID),
-	FOREIGN KEY (Ku_id) REFERENCES Kus(ID),
+	userId int NOT NULL,
+	kuId int NOT NULL,
+	relationship int NOT NULL, -- 0: composed, 1: favorited, 2: commented on
+	FOREIGN KEY (userId) REFERENCES Users(ID),
+	FOREIGN KEY (kuId) REFERENCES Kus(ID),
+    PRIMARY KEY (kuId),
     createdAt timestamp NOT NULL,
     updatedAt timestamp NOT NULL
 );
 
-INSERT INTO Users(Username, Score, createdAt, updatedAt) VALUES ('Patrick', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Users(Username, Score, createdAt, updatedAt) VALUES ('Keenan', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Users(Username, Score, createdAt, updatedAt) VALUES ('Hieu', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Users(Username, Score, createdAt, updatedAt) VALUES ('Franton', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Users(Username, Score, createdAt, updatedAt) VALUES ('Bitch', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Users(Username, Score, createdAt, updatedAt) VALUES ('Peter', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("hello there patrick;this is a test oh boy yes;slowly passing gas", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (1, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("an old silent pond;a frog jumps into the pond;SPLASH - silence again", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (2, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("alone in the rain;damp ones on my hairy legs;slowly passing gas", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (3, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("I wake, reluctant;too cold to get out of bed;but I need to pee", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (4, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("Haikus are easy;But sometimes they don't make sense;Refrigerator", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (5, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("Space is limited;In a haiku so it's hard;to finish what you", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (6, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("Hippopotamus;Anti-hippopotamus;Annihilation", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (2, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("Expand your mind. Get;to work. Better yet, put your;feet up. Watch tv.", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (3, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("Testicles are fun;Unless you get kicked in them;That fucking sucks balls", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (5, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("How many lightbulbs;Does it take to screw a shrink;Oh, got it backwards", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (1, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES ("fuck shit goddamnit;motherfucking shit ow ow;fuck shit fuck fuck fuck", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users VALUES (4, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is a test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is a test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('u fokken wot m8', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('I blue myself', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('ur so clevar', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('marry me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('this is the last test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is a test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is a test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('this is the last test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 11, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 11, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 11, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('I blue myself', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 11, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES ('This is a test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 11, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+CREATE TABLE User_auths (
+    userId int NOT NULL,
+	FOREIGN KEY (userId) REFERENCES Users(ID),
+	apiKey varchar(255) NOT NULL,
+    hashedPassword varchar(255) NOT NULL
+);
 
+-- Create Users
+INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('patrick', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'AIKzkIO91099ckLIK39cKEI', 'atrickpay');
+INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('keenan', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), '91029KJDxiILk81kKI01929', 'eenankay');
+INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('hieu', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), '18xcCMU120lKqPZ182zXX', 'ieuhay');
+INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('franton', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'MEixck92lak9UsRI1291lXyz', 'rantonfay');
+INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('bitch', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'AIz917CdkllVZcT1l99cdAm', 'itchbay');
+INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('peter', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'OVA959lRIsUVYmc8SyCyazIA', 'eterpay');
+
+-- Create Kus
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("hello there patrick;this is a test oh boy yes;slowly passing gas", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (1, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("an old silent pond;a frog jumps into the pond;SPLASH - silence again", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (2, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("alone in the rain;damp ones on my hairy legs;slowly passing gas", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (3, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("I wake, reluctant;too cold to get out of bed;but I need to pee", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (4, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Haikus are easy;But sometimes they don't make sense;Refrigerator", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (5, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Space is limited;In a haiku so it's hard;to finish what you", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (6, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Hippopotamus;Anti-hippopotamus;Annihilation", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (2, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Expand your mind. Get;to work. Better yet, put your;feet up. Watch tv.", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (3, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Testicles are fun;Unless you get kicked in them;That fucking sucks balls", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (5, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("How many lightbulbs;Does it take to screw a shrink;Oh, got it backwards", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (1, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("fuck shit goddamnit;motherfucking shit ow ow;fuck shit fuck fuck fuck", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (4, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Whatchamacallit?;Dgnabit those doohickeys;You know them wing-dings", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (2, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Gar, garble, gargle,;gargoyle, argyle, garbanzo,;gazebo, gazelle", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (3, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("A headless horseman;Sits atop a big trapeze;Slowly passing gas", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (2, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Shit. It's nine. I'm late;Quickly I shave, cut my face;Goddammit. Sunday.", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_users VALUES (5, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Create Comments
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 1, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this is the last test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 1, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 1, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 1, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 2, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 2, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 2, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 3, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I blue myself', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 3, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 3, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('u fokken wot m8', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 3, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 4, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this is the last test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 4, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('ur so clevar', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 4, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 4, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 5, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 5, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 6, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 6, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 6, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 7, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('marry me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 7, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 7, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is a test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 7, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this is the last test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 7, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 8, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 8, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 8, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I blue myself', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 9, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 9, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 9, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 9, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 10, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('marry me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 11, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 11, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 12, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 12, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('marry me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 12, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 12, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 13, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('ur so clevar', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 13, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 14, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 15, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('marry me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 15, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is a test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 15, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 1, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this is the last test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 1, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 1, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 1, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 2, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 2, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 2, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 3, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I blue myself', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 3, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 3, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('u fokken wot m8', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 3, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 4, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this is the last test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 4, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('ur so clevar', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 4, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 4, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 5, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 5, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 6, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 6, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 6, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 7, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('marry me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 7, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 7, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is a test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 7, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this is the last test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 7, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 8, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 8, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 8, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I blue myself', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 9, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 9, True, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 9, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 9, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 10, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('marry me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 11, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (6, LAST_INSERT_ID(), 11, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is another test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 12, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('check me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 12, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('marry me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 12, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (5, LAST_INSERT_ID(), 12, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('this shit sucks', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (2, LAST_INSERT_ID(), 13, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('ur so clevar', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 13, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is okay', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (4, LAST_INSERT_ID(), 14, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 15, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('marry me', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (1, LAST_INSERT_ID(), 15, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('This is a test', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO Ku_comment_users VALUES (3, LAST_INSERT_ID(), 15, False, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

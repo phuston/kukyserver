@@ -1,7 +1,9 @@
 import random
 
 
-usernames = ['Patrick', 'Keenan', 'Hieu', 'Franton', 'Bitch', 'Peter']
+usernames = ['patrick', 'keenan', 'hieu', 'franton', 'bitch', 'peter']
+hashedPasswords = ['atrickpay', 'eenankay', 'ieuhay', 'rantonfay', 'itchbay', 'eterpay']
+apikeys = ['AIKzkIO91099ckLIK39cKEI', '91029KJDxiILk81kKI01929', '18xcCMU120lKqPZ182zXX', 'MEixck92lak9UsRI1291lXyz', 'AIz917CdkllVZcT1l99cdAm', 'OVA959lRIsUVYmc8SyCyazIA']
 
 lat = 42.1
 lon = -71.34
@@ -17,7 +19,11 @@ haikus = [['hello there patrick', 'this is a test oh boy yes', 'slowly passing g
 		  ['Expand your mind. Get', 'to work. Better yet, put your', 'feet up. Watch tv.', 3],
 		  ['Testicles are fun', 'Unless you get kicked in them', 'That fucking sucks balls', 5],
 		  ['How many lightbulbs', 'Does it take to screw a shrink', 'Oh, got it backwards', 1],
-		  ['fuck shit goddamnit', 'motherfucking shit ow ow', 'fuck shit fuck fuck fuck', 4]]
+		  ['fuck shit goddamnit', 'motherfucking shit ow ow', 'fuck shit fuck fuck fuck', 4],
+          ['Whatchamacallit?', 'Dgnabit those doohickeys', 'You know them wing-dings', 2],
+          ['Gar, garble, gargle,', 'gargoyle, argyle, garbanzo,', 'gazebo, gazelle', 3],
+          ['A headless horseman', 'Sits atop a big trapeze', 'Slowly passing gas', 2],
+          ['Shit. It\'s nine. I\'m late', 'Quickly I shave, cut my face', 'Goddammit. Sunday.', 5]]
 
 
 comments = ['this shit sucks', 'I love you', 'This is okay', 'ur so clevar', 'marry me', 
@@ -25,23 +31,24 @@ comments = ['this shit sucks', 'I love you', 'This is okay', 'ur so clevar', 'ma
 'this is the last test']
 
 
-for user in usernames:
-	print "INSERT INTO Users(Username, Score, createdAt, updatedAt) VALUES (\'{}\', {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(user, 0)
+# for i, user in enumerate(usernames):
+#     print "INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES (\'{}\', {}, {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(user, 0, 2)
+#     print "INSERT INTO User_auths VALUES (LAST_INSERT_ID(), \'{}\', \'{}\');".format(apikeys[i], hashedPasswords[i])
 
-
-for ku in haikus:
-	ku_text = ';'.join(ku[0:3])
-	print "INSERT INTO Kus(Content, Upvotes, Downvotes, Lat, Lon, createdAt, updatedAt) VALUES (\"{}\", {}, {}, {}, {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(ku_text, 0, 0, lat, lon)
-	print "INSERT INTO Ku_users VALUES ({}, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(ku[3])
+# for ku in haikus:
+# 	ku_text = ';'.join(ku[0:3])
+# 	print "INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES (\"{}\", {}, {}, {}, {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(ku_text, 0, 0, lat, lon)
+# 	print "INSERT INTO Ku_users VALUES ({}, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(ku[3])
 
 for index, ku in enumerate(haikus):
-	ku_id = index+1
-	rand_comments = random.sample(set(comments), random.randint(1,5))
-
-	for comment in rand_comments:
-		user_id = random.randint(1, len(usernames))
-		print "INSERT INTO Comments(Content, Upvotes, Downvotes, createdAt, updatedAt) VALUES (\'{}\', {}, {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(comment, 0, 0)
-		print "INSERT INTO Ku_comment_users VALUES ({}, LAST_INSERT_ID(), {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(user_id, ku_id)
+    ku_id = index+1
+    rand_comments = random.sample(set(comments), random.randint(1,5))
+    
+    for comment in rand_comments:
+        user_id = random.randint(1, len(usernames))
+        is_op = user_id == haikus[index][3]
+        print "INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES (\'{}\', {}, {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(comment, 0, 0)
+        print "INSERT INTO Ku_comment_users VALUES ({}, LAST_INSERT_ID(), {}, {}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);".format(user_id, ku_id, is_op)
 
 
 
