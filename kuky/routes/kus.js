@@ -60,8 +60,8 @@ router.post('/new/composed', function (req, res, next) {
         res.json(returnObject);
     }).catch(function (error) {
         console.log(error);
-    })
-})
+    });
+});
 
 /* POST a newly favorited ku */
 router.post('/new/favorited', function (req, res, next) {
@@ -73,24 +73,24 @@ router.post('/new/favorited', function (req, res, next) {
         res.send("Ku favorited");
     }).catch(function (error) {
         console.log(error);
-    })
-})
+    });
+});
 
 /* POST an upvote to an existing ku */
 router.post('/upvote', function (req, res, next) {
     Ku.findById(req.body.Ku_id).then(function (ku) {
         ku.increment('upvotes');
         res.send("Confirmed");
-    })
-})
+    });
+});
 
 /* POST a downvote to an existing ku */
 router.post('/downvote', function (req, res, next) {
     Ku.findById(req.body.Ku_id).then(function (ku) {
         ku.increment('downvotes');
         res.send("Confirmed");
-    })
-})
+    });
+});
 
 /* DELETE an existing ku */
 
