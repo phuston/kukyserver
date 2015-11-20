@@ -15,12 +15,12 @@ router.get('/:id', function (req, res, next) {
 	Ku_comment_user.findAll(
 	{
 		where: {
-			Ku_id: req.params.id
+			kuId: req.params.id
 		} 
 	}).then(function(Ku_comment_users){
 		var comment_ids = [];
 		Ku_comment_users.forEach(function (elem, i, arr) {
-			comment_ids.push(elem.dataValues.comment_id);
+			comment_ids.push(elem.dataValues.commentId);
 		});
 		Comment.findAll({
 			where: {
@@ -40,37 +40,56 @@ router.get('/:id', function (req, res, next) {
 /* POST new comment for a given Ku id */
 router.post('/new', function (req, res, next) {
 	var returnObject = {};
+    var isOp;
+    var USER_ID = Number(req.body.User_id);
+    var KU_ID = Number(req.body.Ku_id);
 
-	models.sequelize.transaction(function (t) {
-		return Comment.create({
-			content:req.body.Content
-		}, {transaction: t}).then(function (comment) {
-			returnObject.comment = comment.dataValues;
-			return Ku_comment_user.create({
-				ku_id: req.body.Ku_id,
-				comment_id: comment.dataValues.id,
-				user_id: req.body.User_id
-			}, {transaction: t});
-		});
-	}).then(function (result) {
-		res.json(returnObject);
-	}).catch(function (error) {
-		console.log(error);
-	});
-});
-
+    models.sequelize.transaction(function (t) {
+        return Ku_user.findAll({
+            where: {
+                userId: USER_ID,
+                kuId: KU_ID,
+                relationship: 0
+            }
+        }).then(function (ku_user) {
+            isOp = ku_user.length > 0;
+        }, {transaction: t});
+    }).then(function (result) {
+        console.log(isOp);
+        models.sequelize.transaction(function (t) {
+            return Comment.create({
+                content:req.body.Content
+            }, {transaction: t}).then(function (comment) {
+                returnObject.comment = comment.dataValues;
+                console.log("RETURNOBJECT:\n" + JSON.stringify(returnObject));
+                return Ku_comment_user.create({
+                    kuId: KU_ID,
+                    commentId: comment.dataValues.id,
+                    userId: USER_ID,
+                    isOp: isOp
+            }, {transaction: t});
+        }).then(function (result) {
+            res.json(returnObject);
+        }).catch(function (error) {
+            console.log(error);
+        });
+        }).catch(function (error) {
+            console.log(error);
+        })
+    })
+})
 
 /* POST an upvote to an existing comment */
-router.post('/upvote', function (req, res, next) {
-	Comment.findById(req.body.Comment_id).then(function (comment) {
+router.post('/:id/upvote', function (req, res, next) {
+	Comment.findById(req.params.id).then(function (comment) {
 		comment.increment('upvotes');
 		res.send("Confirmed");
 	});
 });
 
 /* POST a downvote to an existing comment */
-router.post('/downvote', function (req, res, next) {
-	Comment.findById(req.body.Comment_id).then(function (comment) {
+router.post('/:id/downvote', function (req, res, next) {
+	Comment.findById(req.params.id).then(function (comment) {
 		comment.increment('downvotes');
 		res.send("Confirmed");
 	});

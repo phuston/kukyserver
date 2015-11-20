@@ -5,19 +5,19 @@ var User = require("./users");
 
 module.exports = function(sequelize, DataTypes) {
   var K_user = sequelize.define("Ku_user", {
-    user_id: {
+    userId: {
         type: DataTypes.INTEGER, 
         allowNull: false, 
         references: {model: User, key: 'id'}, 
         validate: {isInt: true}},
-    ku_id: {
+    kuId: {
         type: DataTypes.INTEGER, 
         allowNull: false, 
         references: {model: Ku, key: 'id'}, 
         validate: {isInt: true}, 
         primaryKey: true},
-    is_favorite: {
-        type: DataTypes.BOOLEAN, 
+    relationship: {
+        type: DataTypes.INTEGER, 
         allowNull: false, 
         defaultValue: false}
   });

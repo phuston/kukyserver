@@ -52,8 +52,9 @@ router.post('/new/composed', function (req, res, next) {
         }, {transaction: t}).then(function (ku) {
             returnObject.ku = ku.dataValues;
             return Ku_user.create({
-                user_id: req.body.User_id,
-                ku_id: ku.dataValues.id
+                userId: req.body.User_id,
+                kuId: ku.dataValues.id,
+                relationship: 0
             }, {transaction: t});
         });
     }).then(function (result) {
@@ -66,9 +67,9 @@ router.post('/new/composed', function (req, res, next) {
 /* POST a newly favorited ku */
 router.post('/new/favorited', function (req, res, next) {
     Ku_user.create({
-        user_id: req.body.User_id,
-        ku_id: req.body.Ku_id,
-        is_favorite: true
+        userId: req.body.User_id,
+        kuId: req.body.Ku_id,
+        relationship: 1
     }).then(function (result) {
         res.send("Ku favorited");
     }).catch(function (error) {
@@ -77,16 +78,16 @@ router.post('/new/favorited', function (req, res, next) {
 });
 
 /* POST an upvote to an existing ku */
-router.post('/upvote', function (req, res, next) {
-    Ku.findById(req.body.Ku_id).then(function (ku) {
+router.post('/:id/upvote', function (req, res, next) {
+    Ku.findById(req.params.id).then(function (ku) {
         ku.increment('upvotes');
         res.send("Confirmed");
     });
 });
 
 /* POST a downvote to an existing ku */
-router.post('/downvote', function (req, res, next) {
-    Ku.findById(req.body.Ku_id).then(function (ku) {
+router.post('/:id/downvote', function (req, res, next) {
+    Ku.findById(req.params.id).then(function (ku) {
         ku.increment('downvotes');
         res.send("Confirmed");
     });

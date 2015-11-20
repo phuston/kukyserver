@@ -15,7 +15,6 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: false, 
         defaultValue: 0, 
         validate: {isInt: true}}
-    //icon: "OP", "Boat", etc. each maps to an image on app
   });
 
   return Comment;

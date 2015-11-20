@@ -9,13 +9,13 @@ var Ku = models.sequelize.models.Ku;
 
 var responseLimit = 10;
 
-router.post('/register', function (req, res, next) {
-    var hash = crypto
-        .createHash("sha256")
-        .update(req.body.password)
-        .digest('hex');
+// router.post('/register', function (req, res, next) {
+//     var hash = crypto
+//         .createHash("sha256")
+//         .update(req.body.password)
+//         .digest('hex');
     
-})
+// })
 
 /* GET a user's profile. */
 router.get('/:id', function (req, res, next) {
@@ -29,14 +29,14 @@ router.get('/:id', function (req, res, next) {
             returnedUser.basicInfo = user.dataValues;
             Ku_user.findAll({
                 where: {
-                    user_id: req.params.id,
-                    is_favorite: true
+                    userId: req.params.id,
+                    relationship: 1
                 },
                 limit: responseLimit
             }).then(function (kus) {
                 var ids = [];
                 kus.forEach(function (elem, i, arr) {
-                    ids.push(elem.dataValues.ku_id);
+                    ids.push(elem.dataValues.kuId);
                 })
                 Ku.findAll({
                     where: {
