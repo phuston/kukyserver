@@ -43,7 +43,6 @@ router.get('/all/hot', function(req, res, next) {
 /* POST a newly composed ku */
 router.post('/new/composed', function (req, res, next) {
     var returnObject = {}
-    
     models.sequelize.transaction(function (t) {
         return Ku.create({
             content: req.body.Ku,
@@ -92,7 +91,5 @@ router.post('/:id/downvote', function (req, res, next) {
         res.send("Confirmed");
     });
 });
-
-/* DELETE an existing ku */
 
 module.exports = router;

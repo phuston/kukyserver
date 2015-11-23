@@ -41,7 +41,9 @@ function ShowAll() {
 }
 
 
-Comments.findById(1).then(function(comment) {
-    console.log(comment.getData());
+Comments.destroy({
+    where: {
+        id: 33
+    }
 })
 
