@@ -8,7 +8,9 @@ var Ku_user = models.sequelize.models.Ku_user;
 
 var responseLimit = 50;
 
-/* GET all kus in new order */
+/* 
+GET all kus in new order
+ */
 router.get('/all/recent', function (req, res, next) {
 	Ku.findAll({
 		where: {
@@ -26,7 +28,9 @@ router.get('/all/recent', function (req, res, next) {
 	});
 });
 
-/* GET all kus in best voted order */
+/* 
+GET all kus in order of hotness
+ */
 router.get('/all/hot', function(req, res, next) {
 	Ku.findAll({
         limit: responseLimit
@@ -40,7 +44,15 @@ router.get('/all/hot', function(req, res, next) {
 	});
 });
 
-/* POST a newly composed ku */
+/* 
+POST a new ku. Body looks like:
+{
+    "User_id": "1",
+    "Ku": "This is a real test;I am not kidding, no sir; This test is for real",
+    "Lat": "29",
+    "Lon": "28"
+}
+ */
 router.post('/new/composed', function (req, res, next) {
     var returnObject = {}
     models.sequelize.transaction(function (t) {
@@ -63,7 +75,13 @@ router.post('/new/composed', function (req, res, next) {
     });
 });
 
-/* POST a newly favorited ku */
+/* 
+POST a newly favorited ku. Body looks like:
+{
+    "User_id": "1",
+    "Ku_id": "15"
+} 
+*/
 router.post('/new/favorited', function (req, res, next) {
     Ku_user.create({
         userId: req.body.User_id,

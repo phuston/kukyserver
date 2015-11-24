@@ -37,7 +37,14 @@ router.get('/:id', function (req, res, next) {
 	});
 });
 
-/* POST new comment for a given Ku id */
+/* 
+POST new comment for a given Ku id. Body looks like:
+{
+    "Content": "This ku is okay",
+    "Ku_id": "12",
+    "User_id": "6"
+} 
+*/
 router.post('/new', function (req, res, next) {
 	var returnObject = {};
     var isOp;

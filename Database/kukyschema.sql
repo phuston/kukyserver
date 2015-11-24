@@ -67,22 +67,24 @@ CREATE TABLE User_auths (
     userId int NOT NULL,
 	FOREIGN KEY (userId) REFERENCES Users(ID),
 	apiKey varchar(255) NOT NULL,
-    hashedPassword varchar(255) NOT NULL
+    hashedPassword varchar(255) NOT NULL,
+    createdAt timestamp NOT NULL,
+    updatedAt timestamp NOT NULl
 );
 
 -- Create Users
 INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('patrick', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'AIKzkIO91099ckLIK39cKEI', 'atrickpay');
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'AIKzkIO91099ckLIK39cKEI', 'atrickpay', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('keenan', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO User_auths VALUES (LAST_INSERT_ID(), '91029KJDxiILk81kKI01929', 'eenankay');
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), '91029KJDxiILk81kKI01929', 'eenankay', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('hieu', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO User_auths VALUES (LAST_INSERT_ID(), '18xcCMU120lKqPZ182zXX', 'ieuhay');
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), '18xcCMU120lKqPZ182zXX', 'ieuhay', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('franton', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'MEixck92lak9UsRI1291lXyz', 'rantonfay');
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'MEixck92lak9UsRI1291lXyz', 'rantonfay', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('bitch', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'AIz917CdkllVZcT1l99cdAm', 'itchbay');
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'AIz917CdkllVZcT1l99cdAm', 'itchbay', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Users(Username, Score, radiusLimit, createdAt, updatedAt) VALUES ('peter', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'OVA959lRIsUVYmc8SyCyazIA', 'eterpay');
+INSERT INTO User_auths VALUES (LAST_INSERT_ID(), 'OVA959lRIsUVYmc8SyCyazIA', 'eterpay', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Create Kus
 INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("hello there patrick;this is a test oh boy yes;slowly passing gas", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

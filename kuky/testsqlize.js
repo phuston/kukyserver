@@ -13,37 +13,7 @@ var sequelize = new Sequelize(process.env.database, 'root', process.env.password
     },
 });
 
-var Comments = sequelize.define("Comments", {
-    ID: Sequelize.INTEGER,
-    Content: Sequelize.STRING,
-    Upvotes: Sequelize.INTEGER,
-    Downvotes: Sequelize.INTEGER
-}, {
-    classMethods: {
-        getAll: function() {
-            return 'smth';
-        }
-    },
-    instanceMethods: {
-        getData: function() {
-            return this.Content;
-        }
-    }
-})
+var uuid = require('node-uuid');
 
-function ShowAll() {
-    sequelize.query("select * from `Comments`", {type: sequelize.QueryTypes.SELECT})
-    .then(function(rows) {
-        rows.forEach(function(element, index, array) {
-            console.log(element.ID + ": " + element.Content);
-        })
-    })  
-}
-
-
-Comments.destroy({
-    where: {
-        id: 33
-    }
-})
+console.log(uuid());
 
