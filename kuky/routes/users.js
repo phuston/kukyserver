@@ -17,7 +17,7 @@ router.post('/login/:userid/:apikey', function (req, res, next) {
         if (user.dataValues.apiKey == req.params.apikey) {
             res.redirect('/users/' + req.params.userid);
         } else {
-            res.send("User incorrect.");
+            res.status(404).send("User not found.");
         }
     });
 })
@@ -45,9 +45,10 @@ router.post('/register', function (req, res, next) {
             }, {transaction: t});
         });
     }).then(function (result) {
-        res.send("User created");
+        console.log(result);
+        res.redirect('/users/' + result.dataValues.userId);
     }).catch(function (error) {
-        console.log(error);
+        res.status(500).send(error);
     })
 })
 
@@ -60,6 +61,7 @@ router.get('/:id', function (req, res, next) {
 
     User.findById(req.params.id).then(function (user) {
         returnedUser.basicInfo = user.dataValues;
+        // First find all favorited haikus
         Ku_user.findAll({
             where: {
                 userId: req.params.id,

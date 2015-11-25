@@ -71,7 +71,7 @@ router.post('/new/composed', function (req, res, next) {
     }).then(function (result) {
         res.json(returnObject);
     }).catch(function (error) {
-        console.log(error);
+        res.status(500).send(error);
     });
 });
 
@@ -88,9 +88,9 @@ router.post('/new/favorited', function (req, res, next) {
         kuId: req.body.Ku_id,
         relationship: 1
     }).then(function (result) {
-        res.send("Ku favorited");
+        res.send("Confirmed");
     }).catch(function (error) {
-        console.log(error);
+        res.status(500).send(error);
     });
 });
 
@@ -106,7 +106,7 @@ router.post('/:id/upvote', function (req, res, next) {
 router.post('/:id/downvote', function (req, res, next) {
     Ku.findById(req.params.id).then(function (ku) {
         ku.increment('downvotes');
-        res.send("Confirmed");
+        res.send("Confirmed.");
     });
 });
 

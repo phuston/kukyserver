@@ -14,9 +14,7 @@ router.get('/:id', function (req, res, next) {
 
 	Ku_comment_user.findAll(
 	{
-		where: {
-			kuId: req.params.id
-		} 
+		where: {kuId: req.params.id} 
 	}).then(function(Ku_comment_users){
 		var comment_ids = [];
 		Ku_comment_users.forEach(function (elem, i, arr) {
@@ -62,27 +60,25 @@ router.post('/new', function (req, res, next) {
             isOp = ku_user.length > 0;
         }, {transaction: t});
     }).then(function (result) {
-        console.log(isOp);
         models.sequelize.transaction(function (t) {
             return Comment.create({
                 content:req.body.Content
             }, {transaction: t}).then(function (comment) {
                 returnObject.comment = comment.dataValues;
-                console.log("RETURNOBJECT:\n" + JSON.stringify(returnObject));
                 return Ku_comment_user.create({
                     kuId: KU_ID,
                     commentId: comment.dataValues.id,
                     userId: USER_ID,
                     isOp: isOp
-            }, {transaction: t});
+                }, {transaction: t});
+            });
         }).then(function (result) {
             res.json(returnObject);
         }).catch(function (error) {
-            console.log(error);
-        });
-        }).catch(function (error) {
-            console.log(error);
+            res.status(500).send(error);
         })
+    }).catch(function (error) {
+        res.status(500).send(error);
     })
 })
 
