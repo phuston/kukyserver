@@ -12,6 +12,7 @@ var responseLimit = 50;
 GET all kus in new order
  */
 router.get('/all/recent', function (req, res, next) {
+    var response = {};
 	Ku.findAll({
 		where: {
 			createdAt: {
@@ -24,7 +25,8 @@ router.get('/all/recent', function (req, res, next) {
 		kus.sort(function (a, b) {
             return a.dataValues.createdAt - b.dataValues.createdAt;
         })
-        res.json(kus)
+        response['kus'] = kus;
+        res.json(response);
 	});
 });
 
@@ -32,6 +34,7 @@ router.get('/all/recent', function (req, res, next) {
 GET all kus in order of hotness
  */
 router.get('/all/hot', function(req, res, next) {
+    var response = {};
 	Ku.findAll({
         limit: responseLimit
     }).then(function (kus) {
@@ -40,7 +43,8 @@ router.get('/all/hot', function(req, res, next) {
             var karmaB = b.dataValues.upVotes - b.dataValues.downVotes;
             return karmaA - karmaB;
         })
-        res.json(kus)
+        response['kus'] = kus
+        res.json(response)
 	});
 });
 
