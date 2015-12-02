@@ -12,10 +12,20 @@ var User_auth = models.sequelize.models.User_auth;
 var responseLimit = 10;
 
 /* POST log in */
-router.post('/login/:userid/:apikey', function (req, res, next) {
-    User_auth.findById(req.params.userid).then(function (user) {
-        if (user.dataValues.apiKey == req.params.apikey) {
-            res.redirect('/users/' + req.params.userid);
+router.post('/login/:username/:password', function (req, res, next) {
+    var uname = req.params.username.toLowerCase();
+    var hash = crypto
+        .createHash("sha256")
+        .update(req.params.password)
+        .digest('hex');
+    User_auth.findById(uname).then(function (user) {
+        if (user.dataValues.hashedPassword == hash) {
+            var newApi = uuid();
+            User_auth.update(
+                {apiKey: newApi},
+                {where: {username: uname}}
+            );
+            res.json({newKey: newApi});
         } else {
             res.status(404).send("User not found.");
         }
@@ -23,29 +33,26 @@ router.post('/login/:userid/:apikey', function (req, res, next) {
 })
 
 /* POST a new user. Body looks like:
-{
-    "username": [],
-    "password": []
-}
  */
-router.post('/register', function (req, res, next) {
+router.post('/register/:username/:password', function (req, res, next) {
     var hash = crypto
         .createHash("sha256")
-        .update(req.body.password)
+        .update(req.params.password)
         .digest('hex');
     
     models.sequelize.transaction(function (t) {
         return User.create({
-            username: req.body.username,
+            username: req.params.username.toLowerCase(),
         }, {transaction: t}).then(function (user) {
             return User_auth.create({
                 userId: user.dataValues.id,
+                username: user.dataValues.username,
                 apiKey: uuid(),
                 hashedPassword: hash
             }, {transaction: t});
         });
     }).then(function (result) {
-        console.log(result);
+        //console.log(result);
         res.redirect('/users/' + result.dataValues.userId);
     }).catch(function (error) {
         res.status(500).send(error);
@@ -53,13 +60,17 @@ router.post('/register', function (req, res, next) {
 })
 
 /* GET a user's profile. */
-router.get('/:id', function (req, res, next) {
+router.get('/:username', function (req, res, next) {
     var returnedUser = {
         basicInfo: {},
         favoriteHaikus: {}
     }
 
-    User.findById(req.params.id).then(function (user) {
+    User.findOne({
+        where: {
+            username: req.params.username.toLowerCase()
+        }
+    }).then(function (user) {
         returnedUser.basicInfo = user.dataValues;
         // First find all favorited haikus
         Ku_user.findAll({

@@ -21,6 +21,17 @@ module.exports = function(sequelize, DataTypes) {
         increment: function() {
             this.setDataValue('downvotes', this.getDataValues('downvotes')+1);
         }},
+    karma: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {isInt: true},
+        increment: function() {
+            this.setDataValue('karma', this.getDataValues('karma')+1);
+        },
+        decrement: function() {
+            this.setDataValue('karma', this.getDataValues('karma')-1);
+        }},
     lat: {
         type: DataTypes.FLOAT, 
         allowNull: false, 
@@ -37,8 +48,13 @@ module.exports = function(sequelize, DataTypes) {
                   "upvotes": this.upvotes,
                   "downvotes": this.downvotes
               }
+          },
+          getKarma: function() {
+              return this.upvotes - this.downvotes
           }
       }
+  }, {
+      paranoid: true
   });
 
   return Ku;
