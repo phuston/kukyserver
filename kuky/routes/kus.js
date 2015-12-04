@@ -60,13 +60,13 @@ router.get('/all/hot', function(req, res, next) {
 /* 
 POST a new ku. Body looks like:
 {
-    "User_id": "1",
+    "User_id": 1,
     "Ku": "This is a real test;I am not kidding, no sir; This test is for real",
-    "Lat": "29",
-    "Lon": "28"
+    "Lat": 29,
+    "Lon": 28
 }
  */
-router.post('/new/composed', function (req, res, next) {
+router.post('/compose', function (req, res, next) {
     var returnObject = {}
     models.sequelize.transaction(function (t) {
         return Ku.create({
@@ -91,8 +91,8 @@ router.post('/new/composed', function (req, res, next) {
 /* 
 POST a newly favorited ku. Body looks like:
 {
-    "User_id": "1",
-    "Ku_id": "15"
+    "User_id": 1,
+    "Ku_id": 15
 } 
 */
 router.post('/new/favorited', function (req, res, next) {
@@ -107,7 +107,7 @@ router.post('/new/favorited', function (req, res, next) {
     });
 });
 
-/* POST an upvote to an existing ku */
+/* POST an upvote to an existing ku*/
 router.post('/:id/upvote', function (req, res, next) {
     Ku.findById(req.params.id).then(function (ku) {
         ku.increment('upvotes');
