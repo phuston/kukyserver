@@ -12,49 +12,47 @@ var dateLimitRecent = 50;
 var dateLimitHot = 50;
 var karmaThreshold = 3;
 
+// TODO: Unfavoriting kus.
+
 /* 
 GET all kus in new order
  */
-router.get('/all/recent', function (req, res, next) {
+router.get('/all/:sort', function (req, res, next) {
     var response = {};
-	Ku.findAll({
-		where: {
-			createdAt: {
-				$lt: new Date(),
-				$gt: new Date(new Date() - dateLimitRecent*24*60*60*1000)
-			}
-		},
-        limit: responseLimit,
-        order: 'createdAt'
-	}).then(function (kus) {
-        response['kus'] = kus;
-        res.json(response);
-	});
-});
-
-/* 
-GET all kus in order of hotness
- */
-router.get('/all/hot', function(req, res, next) {
-    var response = {};
-	Ku.findAll({
-        where: {
-			createdAt: {
-				$lt: new Date(),
-				$gt: new Date(new Date() - dateLimitHot*24*60*60*1000)
-			},
-            karma: {
-                $gt: karmaThreshold
-            }
-		},
-        limit: responseLimit
-    }).then(function (kus) {
-		kus.sort(function (a, b) {
-            return a.getKarma() - b.getKarma();
-        })
-        response['kus'] = kus
-        res.json(response)
-	});
+    if (req.params.sort == 'recent') {
+        Ku.findAll({
+            where: {
+                createdAt: {
+                    $lt: new Date(),
+                    $gt: new Date(new Date() - dateLimitRecent*24*60*60*1000)
+                }
+            },
+            limit: responseLimit,
+            order: 'createdAt'
+        }).then(function (kus) {
+            response['kus'] = kus;
+            res.json(response);
+        });
+    } else if (req.params.sort == 'hot') {
+        Ku.findAll({
+            where: {
+                createdAt: {
+                    $lt: new Date(),
+                    $gt: new Date(new Date() - dateLimitHot*24*60*60*1000)
+                },
+                karma: {
+                    $gt: karmaThreshold
+                }
+            },
+            limit: responseLimit
+        }).then(function (kus) {
+            kus.sort(function (a, b) {
+                return a.getKarma() - b.getKarma();
+            })
+            response['kus'] = kus
+            res.json(response)
+        });
+    }
 });
 
 /* 

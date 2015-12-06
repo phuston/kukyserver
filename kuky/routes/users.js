@@ -12,11 +12,12 @@ var User_auth = models.sequelize.models.User_auth;
 var responseLimit = 10;
 
 /* POST log in */
-router.post('/login/:username/:password', function (req, res, next) {
-    var uname = req.params.username.toLowerCase();
+router.post('/login', function (req, res, next) {
+    console.log(req.body);
+    var uname = req.body.username.toLowerCase();
     var hash = crypto
         .createHash("sha256")
-        .update(req.params.password)
+        .update(req.body.password)
         .digest('hex');
     User_auth.findById(uname).then(function (user) {
         if (user.dataValues.hashedPassword == hash) {
@@ -34,15 +35,15 @@ router.post('/login/:username/:password', function (req, res, next) {
 
 /* POST a new user. Body looks like:
  */
-router.post('/register/:username/:password', function (req, res, next) {
+router.post('/register', function (req, res, next) {
     var hash = crypto
         .createHash("sha256")
-        .update(req.params.password)
+        .update(req.body.password)
         .digest('hex');
     
     models.sequelize.transaction(function (t) {
         return User.create({
-            username: req.params.username.toLowerCase(),
+            username: req.body.username.toLowerCase(),
         }, {transaction: t}).then(function (user) {
             return User_auth.create({
                 userId: user.dataValues.id,
@@ -55,7 +56,7 @@ router.post('/register/:username/:password', function (req, res, next) {
         //console.log(result);
         res.redirect('/users/' + result.dataValues.userId);
     }).catch(function (error) {
-        res.status(500).send(error);
+        res.status(500).json({"name": error.name});
     })
 })
 
