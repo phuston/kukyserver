@@ -1,7 +1,7 @@
 {
   "test": {
     "username": "root",
-    "password": "mU1rwO0D5",
+    "password": "kukyserver",
     "database": "kuky",
     "host": "127.0.0.1",
     "dialect": "mariadb"
@@ -10,7 +10,7 @@
     "username": "root",
     "password": "kukyserver",
     "database": "kuky",
-    "host": "159.203.136.99",
+    "host": "104.236.85.252 ",
     "dialect": "mariadb"
   }
 }
