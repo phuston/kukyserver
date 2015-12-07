@@ -93,13 +93,24 @@ POST a newly favorited ku. Body looks like:
     "Ku_id": 15
 } 
 */
-router.post('/new/favorited', function (req, res, next) {
-    Ku_user.create({
-        userId: req.body.User_id,
-        kuId: req.body.Ku_id,
-        relationship: 1
-    }).then(function (result) {
-        res.send("Confirmed");
+router.post('/favorite', function (req, res, next) {
+    var whereClause = {
+            userId: req.body.User_id,
+            kuId: req.body.Ku_id,
+            relationship: 1
+        }
+    Ku_user.findOrCreate({
+        where: whereClause
+    }).spread(function (ku_user, created) {
+        if (!created) {
+            Ku_user.destroy({
+                where: whereClause
+            }).then(function () {
+                res.status(200).json({"Status": "Ku successfully unfavorited"});
+            })
+        } else {
+            res.status(200).json({"Status": "Ku successfully favorited"})
+        }
     }).catch(function (error) {
         res.status(500).send(error);
     });

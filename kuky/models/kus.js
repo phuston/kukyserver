@@ -45,8 +45,9 @@ module.exports = function(sequelize, DataTypes) {
           getDataForUser: function() {
               return {
                   "content": this.content,
-                  "upvotes": this.upvotes,
-                  "downvotes": this.downvotes
+                  "karma": this.karma,
+                  "lat": this.lat,
+                  "lon": this.lon
               }
           },
           getKarma: function() {

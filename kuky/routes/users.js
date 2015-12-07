@@ -26,9 +26,9 @@ router.post('/login', function (req, res, next) {
                 {apiKey: newApi},
                 {where: {username: uname}}
             );
-            res.json({newKey: newApi});
+            res.json({newKey: newApi, error: null});
         } else {
-            res.status(404).send("User not found.");
+            res.status(200).json({newKey: null, error: "User not found."});
         }
     });
 })
@@ -40,6 +40,7 @@ router.post('/register', function (req, res, next) {
         .createHash("sha256")
         .update(req.body.password)
         .digest('hex');
+    var apiKey = uuid();
     
     models.sequelize.transaction(function (t) {
         return User.create({
@@ -48,15 +49,14 @@ router.post('/register', function (req, res, next) {
             return User_auth.create({
                 userId: user.dataValues.id,
                 username: user.dataValues.username,
-                apiKey: uuid(),
+                apiKey: apiKey,
                 hashedPassword: hash
             }, {transaction: t});
         });
     }).then(function (result) {
-        //console.log(result);
-        res.redirect('/users/' + result.dataValues.userId);
+        res.json({newKey: apiKey, error: null});
     }).catch(function (error) {
-        res.status(500).json({"name": error.name});
+        res.status(200).json({newKey: null, error: error.name});
     })
 })
 
@@ -64,7 +64,8 @@ router.post('/register', function (req, res, next) {
 router.get('/:username', function (req, res, next) {
     var returnedUser = {
         basicInfo: {},
-        favoriteHaikus: {}
+        composedKus: {},
+        favoritedKus: {}
     }
 
     User.findOne({
@@ -76,14 +77,15 @@ router.get('/:username', function (req, res, next) {
         // First find all favorited haikus
         Ku_user.findAll({
             where: {
-                userId: req.params.id,
-                relationship: 1
+                userId: user.dataValues.id,
             },
             limit: responseLimit
-        }).then(function (kus) {
+        }).then(function (ku_users) {
             var ids = [];
-            kus.forEach(function (elem, i, arr) {
+            var relationship = {};
+            ku_users.forEach(function (elem, i, arr) {
                 ids.push(elem.dataValues.kuId);
+                relationship[elem.dataValues.kuId] = elem.dataValues.relationship;
             })
             Ku.findAll({
                 where: {
@@ -93,7 +95,11 @@ router.get('/:username', function (req, res, next) {
                 }
             }).then(function (kus) {
                 kus.forEach(function (elem, i, array) {
-                    returnedUser.favoriteHaikus[i] = elem.getDataForUser();
+                    if (relationship[elem.dataValues.id] == 1) {
+                        returnedUser.favoritedKus[i] = elem.getDataForUser();
+                    } else {
+                        returnedUser.composedKus[i] = elem.getDataForUser();
+                    }
                 })
                 res.json(returnedUser);
             })
