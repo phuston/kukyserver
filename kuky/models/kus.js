@@ -12,6 +12,9 @@ module.exports = function(sequelize, DataTypes) {
         validate: {isInt: true},
         increment: function() {
             this.setDataValue('upvotes', this.getDataValues('upvotes')+1);
+        },
+        decrement: function() {
+            this.setDataValue('upvotes', this.getDataValues('upvotes')-1);
         }},
     downvotes: {
         type: DataTypes.INTEGER, 
@@ -20,6 +23,9 @@ module.exports = function(sequelize, DataTypes) {
         validate: {isInt: true},
         increment: function() {
             this.setDataValue('downvotes', this.getDataValues('downvotes')+1);
+        },
+        decrement: function() {
+            this.setDataValue('downvotes', this.getDataValues('downvotes')-1);
         }},
     karma: {
         type: DataTypes.INTEGER,
@@ -44,6 +50,7 @@ module.exports = function(sequelize, DataTypes) {
       instanceMethods: {
           getDataForUser: function() {
               return {
+                  "id": this.id,
                   "content": this.content,
                   "karma": this.karma,
                   "lat": this.lat,

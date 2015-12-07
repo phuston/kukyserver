@@ -13,22 +13,24 @@ var responseLimit = 10;
 
 /* POST log in */
 router.post('/login', function (req, res, next) {
-    console.log(req.body);
+    var userId;
     var uname = req.body.username.toLowerCase();
     var hash = crypto
         .createHash("sha256")
         .update(req.body.password)
         .digest('hex');
     User_auth.findById(uname).then(function (user) {
+        userId = user.dataValues.userId;
+        console.log(userId);
         if (user.dataValues.hashedPassword == hash) {
             var newApi = uuid();
             User_auth.update(
                 {apiKey: newApi},
                 {where: {username: uname}}
             );
-            res.json({newKey: newApi, error: null});
+            res.json({newKey: newApi, userId: userId, error: null});
         } else {
-            res.status(200).json({newKey: null, error: "User not found."});
+            res.status(200).json({newKey: null, userId: null, error: "User not found."});
         }
     });
 })
@@ -41,11 +43,13 @@ router.post('/register', function (req, res, next) {
         .update(req.body.password)
         .digest('hex');
     var apiKey = uuid();
+    var userId;
     
     models.sequelize.transaction(function (t) {
         return User.create({
             username: req.body.username.toLowerCase(),
         }, {transaction: t}).then(function (user) {
+            userId = user.dataValues.id;
             return User_auth.create({
                 userId: user.dataValues.id,
                 username: user.dataValues.username,
@@ -54,9 +58,9 @@ router.post('/register', function (req, res, next) {
             }, {transaction: t});
         });
     }).then(function (result) {
-        res.json({newKey: apiKey, error: null});
+        res.json({newKey: apiKey, userId: userId, error: null});
     }).catch(function (error) {
-        res.status(200).json({newKey: null, error: error.name});
+        res.status(200).json({newKey: null, userId: null, error: error.name});
     })
 })
 
