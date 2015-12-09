@@ -48,7 +48,7 @@ module.exports = function(sequelize, DataTypes) {
         validate: {max: 180, min: -180, isFloat: true}}
   }, {
       instanceMethods: {
-          getDataForUser: function() {
+          getData: function() {
               return {
                   "id": this.id,
                   "content": this.content,
