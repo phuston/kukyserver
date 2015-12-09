@@ -167,7 +167,7 @@ router.get('/:kuId/:commentId/:userId/:vote', function (req, res, next) {
     Ku_comment_user.findOne({
         where: {
             userId: req.params.userId,
-            kuId: req.params.id,
+            kuId: req.params.kuId,
             commentId: req.params.commentId,
             relationship: relationship
         }
