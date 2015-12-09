@@ -12,7 +12,12 @@ var dateLimitRecent = 50;
 var dateLimitHot = 50;
 var karmaThreshold = 3;
 
-// TODO: Unfavoriting kus.
+
+router.get('/:id', function (req, res, next) {
+    Ku.findById(req.params.id).then(function (ku) {
+        res.status(200).json({"kus": [ku.getData()]})
+    })
+})
 
 /* 
 GET all kus in new order
@@ -30,7 +35,11 @@ router.get('/all/:sort', function (req, res, next) {
             limit: responseLimit,
             order: 'createdAt'
         }).then(function (kus) {
-            response['kus'] = kus;
+            var returnKus = [];
+            kus.forEach(function (elem, i, arr) {
+                returnKus.push(elem.getData());
+            })
+            response['kus'] = returnKus;
             res.json(response);
         });
     } else if (req.params.sort == 'hot') {
@@ -46,10 +55,14 @@ router.get('/all/:sort', function (req, res, next) {
             },
             limit: responseLimit
         }).then(function (kus) {
-            kus.sort(function (a, b) {
+            var returnKus = [];
+            kus.forEach(function (elem, i, arr) {
+                returnKus.push(elem.getData());
+            })
+            returnKus.sort(function (a, b) {
                 return a.getKarma() - b.getKarma();
             })
-            response['kus'] = kus
+            response['kus'] = returnKus;
             res.json(response)
         });
     }
