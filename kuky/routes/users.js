@@ -3,6 +3,9 @@ var router = express.Router();
 var models = require('../models');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
+var apiAuth = require('./apiAuth');
+// var passport = require('passport');
+// var BasicStrategy = require('passport-http').BasicStrategy;
 
 var User = models.sequelize.models.User;
 var Ku_user = models.sequelize.models.Ku_user;
