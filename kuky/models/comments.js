@@ -9,12 +9,38 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.INTEGER, 
         allowNull: false, 
         defaultValue: 0, 
-        validate: {isInt: true}}, 
+        validate: {isInt: true},
+        increment: function() {
+            this.setDataValue('upvotes', this.getDataValues('upvotes')+1);
+        },
+        decrement: function() {
+            this.setDataValue('upvotes', this.getDataValues('upvotes')-1);
+        }},
     downvotes: {
         type: DataTypes.INTEGER, 
         allowNull: false, 
         defaultValue: 0, 
-        validate: {isInt: true}}
+        validate: {isInt: true},
+        increment: function() {
+            this.setDataValue('upvotes', this.getDataValues('upvotes')+1);
+        },
+        decrement: function() {
+            this.setDataValue('upvotes', this.getDataValues('upvotes')-1);
+        }},
+  }, {
+      instanceMethods: {
+          getData: function() {
+              return {
+                  "id": this.id,
+                  "content": this.content,
+                  "upvotes": this.upvotes,
+                  "downvotes": this.downvotes
+              }
+          },
+          getKarma: function() {
+              return this.upvotes - this.downvotes;
+          }
+      }
   });
 
   return Comment;

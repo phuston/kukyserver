@@ -6,6 +6,8 @@ var sequelize = require('sequelize');
 var User = models.sequelize.models.User;
 var Ku = models.sequelize.models.Ku;
 var Ku_user = models.sequelize.models.Ku_user;
+var Ku_comment_user = models.sequelize.models.Ku_comment_user;
+var Comment = models.sequelize.models.Comment;
 
 var responseLimit = 50;
 var dateLimitRecent = 50;
@@ -14,8 +16,28 @@ var karmaThreshold = 3;
 
 
 router.get('/:id', function (req, res, next) {
+    var response = {
+        ku: {},
+        comments: []
+    };
+    var commentIds = [];
     Ku.findById(req.params.id).then(function (ku) {
-        res.status(200).json({"kus": [ku.getData()]})
+        response.ku = ku.getData();
+        Ku_comment_user.findAll({
+            where: {kuId: response.ku.id}
+        }).then(function (ku_comment_users) {
+            ku_comment_users.forEach(function (elem, i, arr) {
+                commentIds.push(elem.dataValues.commentId);
+            });
+            Comment.findAll({
+                where: {id: {$in: commentIds}}
+            }).then(function (comments) {
+                comments.forEach(function (elem, i, arr) {
+                    response['comments'].push(elem.getData());
+                })
+                res.json(response);
+            })
+        })
     })
 })
 
@@ -152,15 +174,15 @@ router.post('/upvote', function (req, res, next) {
                 Ku.findById(req.body.kuId).then(function (ku) {
                     ku.decrement("upvotes");
                     ku.decrement("karma");
-                    res.status(200).json({"Status": "Ku upvote removed"});
-                })
+                    res.status(200).json({"Status": ku.dataValues.karma-1});
+                });
             })
         } else {
             Ku.findById(req.body.kuId).then(function (ku) {
                 ku.increment("upvotes");
                 ku.increment("karma");
-                res.status(200).json({"Status": "Ku upvote added"})
-            })
+                res.status(200).json({"Status": ku.dataValues.karma+1})
+            });
         }
     }).catch(function (error) {
         res.status(500).send(error);
@@ -168,7 +190,7 @@ router.post('/upvote', function (req, res, next) {
 });
 
 /* 
-POST an downvote to a ku. Body looks like:
+POST a downvote to a ku. Body looks like:
 {
     "userId": 1,
     "kuId": 15
@@ -190,19 +212,36 @@ router.post('/downvote', function (req, res, next) {
                 Ku.findById(req.body.kuId).then(function (ku) {
                     ku.decrement("downvotes");
                     ku.increment("karma");
-                    res.status(200).json({"Status": "Ku downvote removed"});
+                    res.status(200).json({"Status": ku.dataValues.karma+1});
                 })
             })
         } else {
             Ku.findById(req.body.kuId).then(function (ku) {
                 ku.increment("downvotes");
                 ku.decrement("karma");
-                res.status(200).json({"Status": "Ku downvote added"})
+                res.status(200).json({"Status": ku.dataValues.karma-1})
             })
         }
     }).catch(function (error) {
         res.status(500).send(error);
     });
 });
+
+/*
+GET boolean check to see if user has already upvoted/downvoted a ku
+*/
+router.get('/:id/:userId/:vote', function (req, res, next) {
+    var relationship = req.params.vote == 'upvote' ? 2 : 3;
+    Ku_user.findOne({
+        where: {
+            userId: req.params.userId,
+            kuId: req.params.id,
+            relationship: relationship
+        }
+    }).then(function (ku_user) {
+        var hasVote = ku_user !== null;
+        res.json({"status": hasVote});
+    })
+}) 
 
 module.exports = router;
