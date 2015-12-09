@@ -48,7 +48,7 @@ CREATE TABLE Ku_comment_users (
 	userId int NOT NULL,
 	commentId int NOT NULL,
 	kuId int NOT NULL,
-    isOp boolean NOT NULL,
+    relationship int NOT NULL, -- 0: nothing, 1: OP, 2: upvoted, 3: downvoted
 	FOREIGN KEY (userId) REFERENCES Users(id),
 	FOREIGN KEY (commentId) REFERENCES Comments(id),
 	FOREIGN KEY (kuId) REFERENCES Kus(id),
@@ -61,7 +61,7 @@ CREATE TABLE Ku_users (
     id int NOT NULL AUTO_INCREMENT,
 	userId int NOT NULL,
 	kuId int NOT NULL,
-	relationship int NOT NULL, -- 0: composed, 1: favorited, 2: commented on
+	relationship int NOT NULL, -- 0: composed, 1: favorited, 2: upvoted, 3: downvoted
 	FOREIGN KEY (userId) REFERENCES Users(id),
 	FOREIGN KEY (kuId) REFERENCES Kus(id),
     PRIMARY KEY (id),

@@ -22,9 +22,10 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: false, 
         references: {model: Ku, key: 'id'}, 
         validate: {isInt: true}},
-    isOp: {
-        type: DataTypes.BOOLEAN,
+    relationship: {
+        type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {isIn: [[0, 1, 2, 3]]}
     }
   });
 

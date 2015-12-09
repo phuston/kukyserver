@@ -20,7 +20,8 @@ module.exports = function(sequelize, DataTypes) {
         // 0: composed, 1: favorited, 2: upvoted, 3: downvoted
         type: DataTypes.INTEGER, 
         allowNull: false, 
-        defaultValue: false}
+        defaultValue: false,
+        validate: {isIn: [[0, 1, 2, 3]]}}
   });
 
   return K_user;
