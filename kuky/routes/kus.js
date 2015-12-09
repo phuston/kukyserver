@@ -89,37 +89,106 @@ router.post('/compose', function (req, res, next) {
 /* 
 POST a newly favorited ku. Body looks like:
 {
-    "User_id": 1,
-    "Ku_id": 15
+    "userId": 1,
+    "kuId": 15
 } 
 */
-router.post('/new/favorited', function (req, res, next) {
-    Ku_user.create({
-        userId: req.body.User_id,
-        kuId: req.body.Ku_id,
-        relationship: 1
-    }).then(function (result) {
-        res.send("Confirmed");
+router.post('/favorite', function (req, res, next) {
+    var whereClause = {
+            userId: req.body.userId,
+            kuId: req.body.kuId,
+            relationship: 1
+        }
+    Ku_user.findOrCreate({
+        where: whereClause
+    }).spread(function (ku_user, created) {
+        if (!created) {
+            Ku_user.destroy({
+                where: whereClause
+            }).then(function () {
+                res.status(200).json({"Status": "Ku favorite removed"});
+            })
+        } else {
+            res.status(200).json({"Status": "Ku favorite added"})
+        }
     }).catch(function (error) {
         res.status(500).send(error);
     });
 });
 
-/* POST an upvote to an existing ku*/
-router.post('/:id/upvote', function (req, res, next) {
-    Ku.findById(req.params.id).then(function (ku) {
-        ku.increment('upvotes');
-        ku.increment('karma');
-        res.send("Confirmed");
+/* 
+POST an upvote to a ku. Body looks like:
+{
+    "userId": 1,
+    "kuId": 15
+} 
+*/
+router.post('/upvote', function (req, res, next) {
+    var whereClause = {
+            userId: req.body.userId,
+            kuId: req.body.kuId,
+            relationship: 2
+        }
+    Ku_user.findOrCreate({
+        where: whereClause
+    }).spread(function (ku_user, created) {
+        if (!created) {
+            Ku_user.destroy({
+                where: whereClause
+            }).then(function () {
+                Ku.findById(req.body.kuId).then(function (ku) {
+                    ku.decrement("upvotes");
+                    ku.decrement("karma");
+                    res.status(200).json({"Status": "Ku upvote removed"});
+                })
+            })
+        } else {
+            Ku.findById(req.body.kuId).then(function (ku) {
+                ku.increment("upvotes");
+                ku.increment("karma");
+                res.status(200).json({"Status": "Ku upvote added"})
+            })
+        }
+    }).catch(function (error) {
+        res.status(500).send(error);
     });
 });
 
-/* POST a downvote to an existing ku */
-router.post('/:id/downvote', function (req, res, next) {
-    Ku.findById(req.params.id).then(function (ku) {
-        ku.increment('downvotes');
-        ku.decrement('karma');
-        res.send("Confirmed.");
+/* 
+POST an downvote to a ku. Body looks like:
+{
+    "userId": 1,
+    "kuId": 15
+} 
+*/
+router.post('/downvote', function (req, res, next) {
+    var whereClause = {
+            userId: req.body.userId,
+            kuId: req.body.kuId,
+            relationship: 3
+        }
+    Ku_user.findOrCreate({
+        where: whereClause
+    }).spread(function (ku_user, created) {
+        if (!created) {
+            Ku_user.destroy({
+                where: whereClause
+            }).then(function () {
+                Ku.findById(req.body.kuId).then(function (ku) {
+                    ku.decrement("downvotes");
+                    ku.increment("karma");
+                    res.status(200).json({"Status": "Ku downvote removed"});
+                })
+            })
+        } else {
+            Ku.findById(req.body.kuId).then(function (ku) {
+                ku.increment("downvotes");
+                ku.decrement("karma");
+                res.status(200).json({"Status": "Ku downvote added"})
+            })
+        }
+    }).catch(function (error) {
+        res.status(500).send(error);
     });
 });
 
