@@ -100,9 +100,9 @@ router.get('/:username', function (req, res, next) {
             }).then(function (kus) {
                 kus.forEach(function (elem, i, array) {
                     if (relationship[elem.dataValues.id] == 1) {
-                        returnedUser.favoritedKus[i] = elem.getDataForUser();
+                        returnedUser.favoritedKus[i] = elem.getData();
                     } else {
-                        returnedUser.composedKus[i] = elem.getDataForUser();
+                        returnedUser.composedKus[i] = elem.getData();
                     }
                 })
                 res.json(returnedUser);
