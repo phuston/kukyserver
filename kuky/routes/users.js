@@ -4,8 +4,6 @@ var models = require('../models');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
 var apiAuth = require('./apiAuth');
-// var passport = require('passport');
-// var BasicStrategy = require('passport-http').BasicStrategy;
 
 var User = models.sequelize.models.User;
 var Ku_user = models.sequelize.models.Ku_user;
@@ -68,50 +66,63 @@ router.post('/register', function (req, res, next) {
 })
 
 /* GET a user's profile. */
-router.get('/:username', function (req, res, next) {
-    var returnedUser = {
-        basicInfo: {},
-        composedKus: {},
-        favoritedKus: {}
-    }
+router.get('/:username', 
+    apiAuth.authenticate,
+    function (req, res, next) {
 
-    User.findOne({
-        where: {
-            username: req.params.username.toLowerCase()
+    var auth = req.get("authorization").split(' ')[1];
+    var auth_user = new Buffer(auth, 'base64').toString().split(':')[0];
+    var username = req.params.username.toLowerCase();
+
+    // Make sure credentials and params usernames match
+    if(auth_user == username) {
+
+        var returnedUser = {
+            basicInfo: {},
+            composedKus: {},
+            favoritedKus: {}
         }
-    }).then(function (user) {
-        returnedUser.basicInfo = user.dataValues;
-        // First find all favorited haikus
-        Ku_user.findAll({
+
+        User.findOne({
             where: {
-                userId: user.dataValues.id,
-            },
-            limit: responseLimit
-        }).then(function (ku_users) {
-            var ids = [];
-            var relationship = {};
-            ku_users.forEach(function (elem, i, arr) {
-                ids.push(elem.dataValues.kuId);
-                relationship[elem.dataValues.kuId] = elem.dataValues.relationship;
-            })
-            Ku.findAll({
+                username: username
+            }
+        }).then(function (user) {
+            returnedUser.basicInfo = user.dataValues;
+            // First find all favorited haikus
+            Ku_user.findAll({
                 where: {
-                    id: {
-                        $in: ids
-                    }
-                }
-            }).then(function (kus) {
-                kus.forEach(function (elem, i, array) {
-                    if (relationship[elem.dataValues.id] == 1) {
-                        returnedUser.favoritedKus[i] = elem.getData();
-                    } else {
-                        returnedUser.composedKus[i] = elem.getData();
-                    }
+                    userId: user.dataValues.id,
+                },
+                limit: responseLimit
+            }).then(function (ku_users) {
+                var ids = [];
+                var relationship = {};
+                ku_users.forEach(function (elem, i, arr) {
+                    ids.push(elem.dataValues.kuId);
+                    relationship[elem.dataValues.kuId] = elem.dataValues.relationship;
                 })
-                res.json(returnedUser);
+                Ku.findAll({
+                    where: {
+                        id: {
+                            $in: ids
+                        }
+                    }
+                }).then(function (kus) {
+                    kus.forEach(function (elem, i, array) {
+                        if (relationship[elem.dataValues.id] == 1) {
+                            returnedUser.favoritedKus[i] = elem.getData();
+                        } else {
+                            returnedUser.composedKus[i] = elem.getData();
+                        }
+                    })
+                    res.json(returnedUser);
+                })
             })
         })
-    })
+    } else {
+        res.status(401).send('Unauthorized');
+    }
 });
 
 module.exports = router;
