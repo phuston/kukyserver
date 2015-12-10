@@ -82,20 +82,99 @@ router.post('/new', function (req, res, next) {
     })
 })
 
-/* POST an upvote to an existing comment */
-router.post('/:id/upvote', function (req, res, next) {
-	Comment.findById(req.params.id).then(function (comment) {
-		comment.increment('upvotes');
-		res.send("Confirmed");
-	});
+/* POST an upvote to an existing comment. Body looks like:
+{
+    "userId": 5,
+    "commentId": 7,
+    "kuId": 3
+}
+ */
+router.post('/upvote', function (req, res, next) {
+    var whereClause = {
+        userId: req.body.userId,
+        commentId: req.body.commentId,
+        kuId: req.body.kuId,
+        relationship: 2
+    }
+    
+    Ku_comment_user.findOrCreate({
+        where: whereClause
+    }).spread(function (ku_user, created) {
+        if (!created) {
+            Ku_comment_user.destroy({
+                where: whereClause
+            }).then(function () {
+                Comment.findById(req.body.commentId).then(function (comment) {
+                    comment.decrement('upvotes')
+                    res.status(200).json({"Status": comment.dataValues.upvotes - 1 - comment.dataValues.downvotes})
+                });
+            })
+        } else {
+            Comment.findById(req.body.commentId).then(function (comment) {
+                comment.increment('upvotes').then(function (comment) {
+                        res.status(200).json({"Status": comment.dataValues.upvotes + 1 - comment.dataValues.downvotes})
+                    });
+            });
+        }
+    }).catch(function (error) {
+        res.status(500).send(error);
+    });
 });
 
-/* POST a downvote to an existing comment */
-router.post('/:id/downvote', function (req, res, next) {
-	Comment.findById(req.params.id).then(function (comment) {
-		comment.increment('downvotes');
-		res.send("Confirmed");
-	});
+/* POST a downvote to an existing comment. Body looks like:
+{
+    "userId": 5,
+    "commentId": 7,
+    "kuId": 3
+}
+ */
+router.post('/downvote', function (req, res, next) {
+    var whereClause = {
+        userId: req.body.userId,
+        commentId: req.body.commentId,
+        kuId: req.body.kuId,
+        relationship: 3
+    }
+    
+    Ku_comment_user.findOrCreate({
+        where: whereClause
+    }).spread(function (ku_user, created) {
+        if (!created) {
+            Ku_comment_user.destroy({
+                where: whereClause
+            }).then(function () {
+                Comment.findById(req.body.commentId).then(function (comment) {
+                    comment.decrement('downvotes');
+                    res.status(200).json({"Status": comment.dataValues.upvotes - comment.dataValues.downvotes + 1})
+                });
+            })
+        } else {
+            Comment.findById(req.body.commentId).then(function (comment) {
+                comment.increment('downvotes');
+                res.status(200).json({"Status": comment.dataValues.upvotes - comment.dataValues.downvotes - 1})
+            });
+        }
+    }).catch(function (error) {
+        res.status(500).send(error);
+    });
 });
+
+/*
+GET boolean check to see if user has already upvoted/downvoted a ku
+*/
+router.get('/:kuId/:commentId/:userId/:vote', function (req, res, next) {
+    var relationship = req.params.vote == 'upvote' ? 2 : 3;
+    Ku_comment_user.findOne({
+        where: {
+            userId: req.params.userId,
+            kuId: req.params.kuId,
+            commentId: req.params.commentId,
+            relationship: relationship
+        }
+    }).then(function (ku_comment_user) {
+        var hasVote = ku_comment_user !== null;
+        res.json({"status": hasVote});
+    })
+}) 
 
 module.exports = router;

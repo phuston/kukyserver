@@ -100,22 +100,29 @@ router.get('/:username',
                 var relationship = {};
                 ku_users.forEach(function (elem, i, arr) {
                     ids.push(elem.dataValues.kuId);
-                    relationship[elem.dataValues.kuId] = elem.dataValues.relationship;
-                })
-                Ku.findAll({
-                    where: {
-                        id: {
-                            $in: ids
-                        }
+                    var key = elem.dataValues.kuId;
+                    var value = elem.dataValues.relationship;
+                    if (relationship.hasOwnProperty(key)) {
+                        relationship[key].push(value);
+                    } else {
+                        relationship[key] = [value];   
                     }
+                });
+                console.log(relationship);
+                Ku.findAll({
+                    where: {id: {$in: ids}}
                 }).then(function (kus) {
                     kus.forEach(function (elem, i, array) {
-                        if (relationship[elem.dataValues.id] == 1) {
-                            returnedUser.favoritedKus[i] = elem.getData();
-                        } else {
-                            returnedUser.composedKus[i] = elem.getData();
+                        var thisKu = elem.getData();
+                        thisKu.upvoted = relationship[elem.dataValues.id][1] === 2 || false;
+                        thisKu.downvoted = relationship[elem.dataValues.id][1] === 3 || false;
+                        console.log(thisKu);
+                        if (relationship[elem.dataValues.id][0] == 1) {
+                            returnedUser.favoritedKus[i] = thisKu;
+                        } else if (relationship[elem.dataValues.id][0] == 0) {
+                            returnedUser.composedKus[i] = thisKu;
                         }
-                    })
+                    });
                     res.json(returnedUser);
                 })
             })
