@@ -3,6 +3,7 @@ var router = express.Router();
 var models = require('../models');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
+var apiAuth = require('./apiAuth');
 
 var User = models.sequelize.models.User;
 var Ku_user = models.sequelize.models.Ku_user;
@@ -65,57 +66,70 @@ router.post('/register', function (req, res, next) {
 })
 
 /* GET a user's profile. */
-router.get('/:username', function (req, res, next) {
-    var returnedUser = {
-        basicInfo: {},
-        composedKus: {},
-        favoritedKus: {}
-    }
+router.get('/:username', 
+    apiAuth.authenticate,
+    function (req, res, next) {
 
-    User.findOne({
-        where: {
-            username: req.params.username.toLowerCase()
+    var auth = req.get("authorization").split(' ')[1];
+    var auth_user = new Buffer(auth, 'base64').toString().split(':')[0];
+    var username = req.params.username.toLowerCase();
+
+    // Make sure credentials and params usernames match
+    if(auth_user == username) {
+
+        var returnedUser = {
+            basicInfo: {},
+            composedKus: {},
+            favoritedKus: {}
         }
-    }).then(function (user) {
-        returnedUser.basicInfo = user.dataValues;
-        // First find all favorited haikus
-        Ku_user.findAll({
+
+        User.findOne({
             where: {
-                userId: user.dataValues.id,
-            },
-            limit: responseLimit
-        }).then(function (ku_users) {
-            var ids = [];
-            var relationship = {};
-            ku_users.forEach(function (elem, i, arr) {
-                ids.push(elem.dataValues.kuId);
-                var key = elem.dataValues.kuId;
-                var value = elem.dataValues.relationship;
-                if (relationship.hasOwnProperty(key)) {
-                    relationship[key].push(value);
-                } else {
-                    relationship[key] = [value];   
-                }
-            })
-            console.log(relationship);
-            Ku.findAll({
-                where: {id: {$in: ids}}
-            }).then(function (kus) {
-                kus.forEach(function (elem, i, array) {
-                    var thisKu = elem.getData();
-                    thisKu.upvoted = relationship[elem.dataValues.id][1] === 2 || false;
-                    thisKu.downvoted = relationship[elem.dataValues.id][1] === 3 || false;
-                    console.log(thisKu);
-                    if (relationship[elem.dataValues.id][0] == 1) {
-                        returnedUser.favoritedKus[i] = thisKu;
-                    } else if (relationship[elem.dataValues.id][0] == 0) {
-                        returnedUser.composedKus[i] = thisKu;
+                username: username
+            }
+        }).then(function (user) {
+            returnedUser.basicInfo = user.dataValues;
+            // First find all favorited haikus
+            Ku_user.findAll({
+                where: {
+                    userId: user.dataValues.id,
+                },
+                limit: responseLimit
+            }).then(function (ku_users) {
+                var ids = [];
+                var relationship = {};
+                ku_users.forEach(function (elem, i, arr) {
+                    ids.push(elem.dataValues.kuId);
+                    var key = elem.dataValues.kuId;
+                    var value = elem.dataValues.relationship;
+                    if (relationship.hasOwnProperty(key)) {
+                        relationship[key].push(value);
+                    } else {
+                        relationship[key] = [value];   
                     }
+                });
+                console.log(relationship);
+                Ku.findAll({
+                    where: {id: {$in: ids}}
+                }).then(function (kus) {
+                    kus.forEach(function (elem, i, array) {
+                        var thisKu = elem.getData();
+                        thisKu.upvoted = relationship[elem.dataValues.id][1] === 2 || false;
+                        thisKu.downvoted = relationship[elem.dataValues.id][1] === 3 || false;
+                        console.log(thisKu);
+                        if (relationship[elem.dataValues.id][0] == 1) {
+                            returnedUser.favoritedKus[i] = thisKu;
+                        } else if (relationship[elem.dataValues.id][0] == 0) {
+                            returnedUser.composedKus[i] = thisKu;
+                        }
+                    });
+                    res.json(returnedUser);
                 })
-                res.json(returnedUser);
             })
         })
-    })
+    } else {
+        res.status(401).send('Unauthorized');
+    }
 });
 
 module.exports = router;

@@ -15,6 +15,9 @@ var dateLimitHot = 50;
 var karmaThreshold = 3;
 
 
+/*
+GET single ku by id
+*/
 router.get('/:id', function (req, res, next) {
     var response = {
         ku: {},
