@@ -57,7 +57,7 @@ router.post('/new', function (req, res, next) {
                 relationship: 0
             }
         }).then(function (ku_user) {
-            isOp = ku_user.length > 0;
+            isOp = ku_user.length > 0 ? 1 : 0;
         }, {transaction: t});
     }).then(function (result) {
         models.sequelize.transaction(function (t) {
@@ -65,11 +65,12 @@ router.post('/new', function (req, res, next) {
                 content:req.body.Content
             }, {transaction: t}).then(function (comment) {
                 returnObject.comment = comment.dataValues;
+                console.log(isOp);
                 return Ku_comment_user.create({
                     kuId: KU_ID,
                     commentId: comment.dataValues.id,
                     userId: USER_ID,
-                    isOp: isOp
+                    relationship: isOp
                 }, {transaction: t});
             });
         }).then(function (result) {

@@ -96,23 +96,24 @@ router.get('/all/:sort', function (req, res, next) {
 /* 
 POST a new ku. Body looks like:
 {
-    "User_id": 1,
-    "Ku": "This is a real test;I am not kidding, no sir; This test is for real",
-    "Lat": 29,
-    "Lon": 28
+    "userId": 1,
+    "ku": "This is a real test;I am not kidding, no sir; This test is for real",
+    "lat": 29,
+    "lon": 28
 }
  */
 router.post('/compose', function (req, res, next) {
+    console.log(req.body);
     var returnObject = {}
     models.sequelize.transaction(function (t) {
         return Ku.create({
-            content: req.body.Ku,
-            lat: req.body.Lat,
-            lon: req.body.Lon
+            content: req.body.ku,
+            lat: req.body.lat,
+            lon: req.body.lon
         }, {transaction: t}).then(function (ku) {
             returnObject.ku = ku.dataValues;
             return Ku_user.create({
-                userId: req.body.User_id,
+                userId: req.body.userId,
                 kuId: ku.dataValues.id,
                 relationship: 0
             }, {transaction: t});
