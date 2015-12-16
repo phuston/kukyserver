@@ -39,15 +39,15 @@ router.get('/:id', function (req, res, next) {
 POST new comment for a given Ku id. Body looks like:
 {
     "Content": "This ku is okay",
-    "kuId": "12",
-    "userId": "6"
+    "kuId": 12,
+    "userId": 6
 } 
 */
 router.post('/compose', function (req, res, next) {
 	var returnObject = {};
     var isOp;
-    var USER_ID = Number(req.body.userId);
-    var KU_ID = Number(req.body.kuId);
+    var USER_ID = req.body.userId;
+    var KU_ID = req.body.kuId;
 
     models.sequelize.transaction(function (t) {
         return Ku_user.findAll({
