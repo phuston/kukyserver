@@ -54,8 +54,8 @@ router.post('/compose', apiAuth.authenticate, function (req, res, next) {
         if (user.dataValues.username == auth_user) {
         	var returnObject = {};
             var isOp;
-            var USER_ID = Number(req.body.userId);
-            var KU_ID = Number(req.body.kuId);
+            var USER_ID = req.body.userId;
+            var KU_ID = req.body.kuId;
 
             models.sequelize.transaction(function (t) {
                 return Ku_user.findAll({
