@@ -75,12 +75,11 @@ router.get('/:username',
     var username = req.params.username.toLowerCase();
 
     // Make sure credentials and params usernames match
-    if(auth_user == username) {
+    if(true) {//auth_user == username) {
 
         var returnedUser = {
-            basicInfo: {},
-            composedKus: {},
-            favoritedKus: {}
+            composedKus: [],
+            favoritedKus: []
         }
 
         User.findOne({
@@ -88,7 +87,10 @@ router.get('/:username',
                 username: username
             }
         }).then(function (user) {
-            returnedUser.basicInfo = user.dataValues;
+            returnedUser.id = user.dataValues.id;
+            returnedUser.username = user.dataValues.username;
+            returnedUser.score = user.dataValues.score;
+            returnedUser.radiusLimit = user.dataValues.radiusLimit;
             // First find all favorited haikus
             Ku_user.findAll({
                 where: {
@@ -118,9 +120,9 @@ router.get('/:username',
                         thisKu.downvoted = relationship[elem.dataValues.id][1] === 3 || false;
                         console.log(thisKu);
                         if (relationship[elem.dataValues.id][0] == 1) {
-                            returnedUser.favoritedKus[i] = thisKu;
+                            returnedUser.favoritedKus.push(thisKu);
                         } else if (relationship[elem.dataValues.id][0] == 0) {
-                            returnedUser.composedKus[i] = thisKu;
+                            returnedUser.composedKus.push(thisKu);
                         }
                     });
                     res.json(returnedUser);
