@@ -75,7 +75,8 @@ router.get('/:username',
     var username = req.params.username.toLowerCase();
 
     // Make sure credentials and params usernames match
-    if(true) {//auth_user == username) {
+    console.log(auth_user);
+    if (auth_user == username) {
 
         var returnedUser = {
             composedKus: [],
@@ -110,19 +111,20 @@ router.get('/:username',
                         relationship[key] = [value];   
                     }
                 });
-                console.log(relationship);
+                console.log("BEGINNING: " + relationship);
                 Ku.findAll({
                     where: {id: {$in: ids}}
                 }).then(function (kus) {
                     kus.forEach(function (elem, i, array) {
                         var thisKu = elem.getData();
-                        thisKu.upvoted = relationship[elem.dataValues.id][1] === 2 || false;
-                        thisKu.downvoted = relationship[elem.dataValues.id][1] === 3 || false;
+                        thisKu.upvoted = relationship[elem.dataValues.id].indexOf(2) > -1 || false; // Test if ku was upvoted by user
+                        thisKu.downvoted = relationship[elem.dataValues.id].indexOf(3) > -1 || false;
                         console.log(thisKu);
-                        if (relationship[elem.dataValues.id][0] == 1) {
+                        if (relationship[elem.dataValues.id].indexOf(1) > -1) {
                             thisKu.favorited = true;
                             returnedUser.favoritedKus.push(thisKu);
-                        } else if (relationship[elem.dataValues.id][0] == 0) {
+                        }
+                        if (relationship[elem.dataValues.id].indexOf(0) > -1) {
                             returnedUser.composedKus.push(thisKu);
                         }
                     });
