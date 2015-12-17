@@ -1,0 +1,16 @@
+{
+  "test": {
+    "username": "root",
+    "password": "kukyserver",
+    "database": "kuky",
+    "host": "127.0.0.1",
+    "dialect": "mariadb"
+  },
+  "production": {
+    "username": "root",
+    "password": "kukyserver",
+    "database": "kuky",
+    "host": "104.236.85.252 ",
+    "dialect": "mariadb"
+  }
+}
