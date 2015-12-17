@@ -120,6 +120,7 @@ router.get('/:username',
                         thisKu.downvoted = relationship[elem.dataValues.id][1] === 3 || false;
                         console.log(thisKu);
                         if (relationship[elem.dataValues.id][0] == 1) {
+                            thisKu.favorited = true;
                             returnedUser.favoritedKus.push(thisKu);
                         } else if (relationship[elem.dataValues.id][0] == 0) {
                             returnedUser.composedKus.push(thisKu);
