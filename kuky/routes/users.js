@@ -117,8 +117,8 @@ router.get('/:username',
                 }).then(function (kus) {
                     kus.forEach(function (elem, i, array) {
                         var thisKu = elem.getData();
-                        thisKu.upvoted = relationship[thisKu.id].indexOf(2) > -1 || false; // Test if ku was upvoted by user
-                        thisKu.downvoted = relationship[thisKu.id].indexOf(3) > -1 || false;
+                        thisKu.upvoted = relationship[thisKu.id].indexOf(2) > -1; // Test if ku was upvoted by user
+                        thisKu.downvoted = relationship[thisKu.id].indexOf(3) > -1;
                         console.log(thisKu);
                         if (relationship[thisKu.id].indexOf(1) > -1) {
                             thisKu.favorited = true;

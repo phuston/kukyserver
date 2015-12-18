@@ -19,7 +19,7 @@ var karmaThreshold = 3;
 /*
 GET single ku by id
 */
-router.get('/single/:id/:userId', apiAuth.authenticate, function (req, res, next) { // TODO:FIX THIS
+router.get('/:id/:userId', apiAuth.authenticate, function (req, res, next) { // TODO:FIX THIS
     var response = {
         ku: {},
         comments: []
@@ -67,8 +67,13 @@ router.get('/single/:id/:userId', apiAuth.authenticate, function (req, res, next
 /* 
 GET all kus in new order
  */
-router.get('/all/:sort', apiAuth.authenticate, function (req, res, next) {
-    var response = {};
+router.get('/all/:sort/:userId', apiAuth.authenticate, function (req, res, next) {
+    var response = {
+        "kus": []
+    };
+    var tempKus = {};
+    var kuIds = [];
+    var relationship = {};
     if (req.params.sort == 'recent') {
         Ku.findAll({
             where: {
@@ -80,12 +85,42 @@ router.get('/all/:sort', apiAuth.authenticate, function (req, res, next) {
             limit: responseLimit,
             order: 'createdAt'
         }).then(function (kus) {
-            var returnKus = [];
             kus.forEach(function (elem, i, arr) {
-                returnKus.splice(0, 0, elem.getData());
+                kuIds.push(elem.dataValues.id);
+                tempKus[elem.dataValues.id] = elem.getData();
+            });
+            Ku_user.findAll({
+                where: {
+                    userId: req.params.userId,
+                    kuId: {$in: kuIds}
+                }
+            }).then(function(ku_users) {
+                ku_users.forEach(function (elem, i, arr) {
+                    console.log(elem.dataValues.kuId);
+                    var key = elem.dataValues.kuId;
+                    var value = elem.dataValues.relationship;
+                    if (relationship.hasOwnProperty(key)) {
+                        relationship[key].push(value);
+                    } else {
+                        relationship[key] = [value];
+                    }
+                });
+                console.log(relationship);
+                kuIds.forEach(function (elem, i, arr) {
+                    var thisKu = tempKus[elem];
+                    if (elem in relationship) {
+                        thisKu.favorited = relationship[elem].indexOf(1) > -1;
+                        thisKu.upvoted = relationship[elem].indexOf(2) > -1;
+                        thisKu.downvoted = relationship[elem].indexOf(3) > -1;
+                    } else {
+                        thisKu.favorited = false;
+                        thisKu.upvoted = false;
+                        thisKu.downvoted = false;
+                    }
+                    response['kus'].push(thisKu);
+                });
+                res.json(response);
             })
-            response['kus'] = returnKus;
-            res.json(response);
         });
     } else if (req.params.sort == 'hot') {
         Ku.findAll({
@@ -100,15 +135,42 @@ router.get('/all/:sort', apiAuth.authenticate, function (req, res, next) {
             },
             limit: responseLimit
         }).then(function (kus) {
-            var returnKus = [];
             kus.forEach(function (elem, i, arr) {
-                returnKus.push(elem.getData());
-            })
-            returnKus.sort(function (a, b) {
-                return a.getKarma() - b.getKarma();
-            })
-            response['kus'] = returnKus;
-            res.json(response)
+                kuIds.push(elem.dataValues.id);
+                tempKus[elem.dataValues.id] = elem.getData();
+            });
+            Ku_user.findAll({
+                where: {
+                    userId: req.params.userId,
+                    kuId: {$in: kuIds}
+                }
+            }).then(function(ku_users) {
+                ku_users.forEach(function (elem, i, arr) {
+                    console.log(elem.dataValues.kuId);
+                    var key = elem.dataValues.kuId;
+                    var value = elem.dataValues.relationship;
+                    if (relationship.hasOwnProperty(key)) {
+                        relationship[key].push(value);
+                    } else {
+                        relationship[key] = [value];
+                    }
+                });
+                console.log(relationship);
+                kuIds.forEach(function (elem, i, arr) {
+                    var thisKu = tempKus[elem];
+                    if (elem in relationship) {
+                        thisKu.favorited = relationship[elem].indexOf(1) > -1;
+                        thisKu.upvoted = relationship[elem].indexOf(2) > -1;
+                        thisKu.downvoted = relationship[elem].indexOf(3) > -1;
+                    } else {
+                        thisKu.favorited = false;
+                        thisKu.upvoted = false;
+                        thisKu.downvoted = false;
+                    }
+                    response['kus'].push(thisKu);
+                });
+                res.json(response);
+            });
         });
     }
 });
