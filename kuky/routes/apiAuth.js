@@ -5,6 +5,9 @@ var BasicStrategy = require('passport-http').BasicStrategy;
 var User_auth = models.sequelize.models.User_auth;
 var User = models.sequelize.models.User;
 
+/*
+Basic Authentication using username and api key
+*/
 passport.use(new BasicStrategy(
     function(username, apiKey, callback) {
         User.findOne({

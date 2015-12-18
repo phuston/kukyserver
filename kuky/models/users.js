@@ -1,5 +1,8 @@
 "use strict";
 
+/*
+Model for connecting user info to database through Sequelize
+*/
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
     username: {

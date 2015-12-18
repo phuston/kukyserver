@@ -4,6 +4,9 @@ var Comment = require("./comments");
 var Ku = require("./kus");
 var User = require("./users");
 
+/*
+Model for connecting ku-comment-user relationship info to database through Sequelize
+*/
 module.exports = function(sequelize, DataTypes) {
   var Kcu = sequelize.define("Ku_comment_user", {
     userId: {

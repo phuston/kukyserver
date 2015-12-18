@@ -1,5 +1,8 @@
 "use strict";
 
+/*
+Model for connecting user authentication info to database through Sequelize
+*/
 module.exports = function(sequelize, DataTypes) {
     var User_auth = sequelize.define("User_auth", {
         userId: {
