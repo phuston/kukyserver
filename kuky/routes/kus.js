@@ -63,7 +63,7 @@ router.get('/all/:sort', apiAuth.authenticate, function (req, res, next) {
         }).then(function (kus) {
             var returnKus = [];
             kus.forEach(function (elem, i, arr) {
-                returnKus.push(elem.getData());
+                returnKus.splice(0, 0, elem.getData());
             })
             response['kus'] = returnKus;
             res.json(response);

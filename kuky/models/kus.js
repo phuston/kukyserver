@@ -54,7 +54,8 @@ module.exports = function(sequelize, DataTypes) {
                   "content": this.content,
                   "karma": this.karma,
                   "lat": this.lat,
-                  "lon": this.lon
+                  "lon": this.lon,
+                  "created": this.createdAt
               }
           },
           getKarma: function() {
