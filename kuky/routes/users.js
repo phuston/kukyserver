@@ -36,8 +36,13 @@ router.post('/login', function (req, res, next) {
     });
 })
 
-/* POST a new user. Body looks like:
- */
+/* 
+POST a new user. Body looks like:
+{
+    "username": "test1234"
+    "password": "password"
+}
+*/
 router.post('/register', function (req, res, next) {
     var hash = crypto
         .createHash("sha256")
