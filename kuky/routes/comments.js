@@ -10,26 +10,38 @@ var Ku_comment_user = models.sequelize.models.Ku_comment_user;
 var Comment = models.sequelize.models.Comment;
 
 /* GET all comments for a given Ku id */
-router.get('/:id', apiAuth.authenticate, function (req, res, next) {
+router.get('/:id/:userId', apiAuth.authenticate, function (req, res, next) {
 	var all_comments = [];
+    var comment_ids = [];
+    var relationship = {};
 
-	Ku_comment_user.findAll(
-	{
-		where: {kuId: req.params.id} 
+	Ku_comment_user.findAll({
+		where: {
+            kuId: req.params.id,
+            userId: req.params.userId
+        } 
 	}).then(function(Ku_comment_users){
-		var comment_ids = [];
 		Ku_comment_users.forEach(function (elem, i, arr) {
 			comment_ids.push(elem.dataValues.commentId);
+            var key = elem.dataValues.commentId;
+            var value = elem.dataValues.relationship;
+            if (relationship.hasOwnProperty(key)) {
+                relationship[key].push(value);
+            } else {
+                relationship[key] = [value];
+            }
 		});
+        console.log(relationship);
 		Comment.findAll({
-			where: {
-				id: {
-					$in: comment_ids
-				}
-			}
+			where: {id: {$in: comment_ids}}
 		}).then(function (comments){
 			comments.forEach(function (elem, i, arr) {
-				all_comments.push(elem.dataValues)
+                var comment = elem.getData();
+                comment.isOp = relationship[comment.id].indexOf(1) > -1 || false;
+                comment.upvoted = relationship[comment.id].indexOf(2) > -1 || false;
+                comment.downvoted = relationship[comment.id].indexOf(3) > -1 || false;
+                console.log(comment);
+				all_comments.push(comment);
 			});
 			res.json(all_comments);
 		});
@@ -40,7 +52,6 @@ router.get('/:id', apiAuth.authenticate, function (req, res, next) {
 /* 
 POST new comment for a given Ku id. Body looks like:
 {
-
     "comment": "This ku is okay",
     "kuId": "12",
     "userId": "6"

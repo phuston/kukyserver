@@ -117,14 +117,14 @@ router.get('/:username',
                 }).then(function (kus) {
                     kus.forEach(function (elem, i, array) {
                         var thisKu = elem.getData();
-                        thisKu.upvoted = relationship[elem.dataValues.id].indexOf(2) > -1 || false; // Test if ku was upvoted by user
-                        thisKu.downvoted = relationship[elem.dataValues.id].indexOf(3) > -1 || false;
+                        thisKu.upvoted = relationship[thisKu.id].indexOf(2) > -1 || false; // Test if ku was upvoted by user
+                        thisKu.downvoted = relationship[thisKu.id].indexOf(3) > -1 || false;
                         console.log(thisKu);
-                        if (relationship[elem.dataValues.id].indexOf(1) > -1) {
+                        if (relationship[thisKu.id].indexOf(1) > -1) {
                             thisKu.favorited = true;
                             returnedUser.favoritedKus.push(thisKu);
                         }
-                        if (relationship[elem.dataValues.id].indexOf(0) > -1) {
+                        if (relationship[thisKu.id].indexOf) {
                             returnedUser.composedKus.push(thisKu);
                         }
                     });
