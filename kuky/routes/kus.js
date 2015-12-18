@@ -19,12 +19,13 @@ var karmaThreshold = 3;
 /*
 GET single ku by id
 */
-router.get('/:id', apiAuth.authenticate, function (req, res, next) { // TODO:FIX THIS
+router.get('/:id/:userId', apiAuth.authenticate, function (req, res, next) { // TODO:FIX THIS
     var response = {
         ku: {},
         comments: []
     };
     var commentIds = [];
+    var relationship = {};
     Ku.findById(req.params.id).then(function (ku) {
         response.ku = ku.getData();
         Ku_comment_user.findAll({
@@ -32,12 +33,26 @@ router.get('/:id', apiAuth.authenticate, function (req, res, next) { // TODO:FIX
         }).then(function (ku_comment_users) {
             ku_comment_users.forEach(function (elem, i, arr) {
                 commentIds.push(elem.dataValues.commentId);
+                var key = elem.dataValues.commentId;
+                var value = elem.dataValues.relationship;
+                if (relationship.hasOwnProperty(key)) {
+                    relationship[key].push(value);
+                } else {
+                    relationship[key] = [value];
+                }
             });
+            console.log(relationship);
             Comment.findAll({
                 where: {id: {$in: commentIds}}
             }).then(function (comments) {
                 comments.forEach(function (elem, i, arr) {
-                    response['comments'].push(elem.getData());
+                    var thisComment = elem.getData();
+                    console.log(relationship[thisComment.id]);
+                    thisComment.isOp = relationship[thisComment.id].indexOf(1) > -1 || false;
+                    thisComment.upvoted = relationship[thisComment.id].indexOf(2) > -1 || false;
+                    thisComment.downvoted = relationship[thisComment.id].indexOf(3) > -1 || false;
+                    console.log(thisComment);
+                    response.comments.push(thisComment);
                 })
                 res.json(response);
             });

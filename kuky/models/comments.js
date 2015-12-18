@@ -33,8 +33,7 @@ module.exports = function(sequelize, DataTypes) {
               return {
                   "id": this.id,
                   "content": this.content,
-                  "upvotes": this.upvotes,
-                  "downvotes": this.downvotes
+                  "karma": this.upvotes - this.downvotes
               }
           },
           getKarma: function() {
