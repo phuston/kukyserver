@@ -19,7 +19,7 @@ var karmaThreshold = 3;
 /*
 GET single ku by id
 */
-router.get('/:id/:userId', apiAuth.authenticate, function (req, res, next) { // TODO:FIX THIS
+router.get('/single/:id/:userId', apiAuth.authenticate, function (req, res, next) { // TODO:FIX THIS
     var response = {
         ku: {},
         comments: []
