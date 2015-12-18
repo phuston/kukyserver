@@ -13,7 +13,7 @@ var Comment = models.sequelize.models.Comment;
 var responseLimit = 50;
 var dateLimitRecent = 50;
 var dateLimitHot = 50;
-var karmaThreshold = 3;
+var karmaThreshold = 1;
 
 
 /*
