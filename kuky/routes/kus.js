@@ -35,10 +35,14 @@ router.get('/single/:id/:userId', apiAuth.authenticate, function (req, res, next
                 commentIds.push(elem.dataValues.commentId);
                 var key = elem.dataValues.commentId;
                 var value = elem.dataValues.relationship;
-                if (relationship.hasOwnProperty(key)) {
-                    relationship[key].push(value);
+                if ((relationship == 1) || (elem.dataValues.userId == req.params.userId)) {
+                    if (relationship.hasOwnProperty(key)) {
+                        relationship[key].push(value);
+                    } else {
+                        relationship[key] = [value];
+                    }
                 } else {
-                    relationship[key] = [value];
+                    relationship[key] = [0];
                 }
             });
             console.log(relationship);
