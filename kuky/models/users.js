@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     score: {
         type: DataTypes.INTEGER, 
         allowNull: false, 
-        defaultValue: 0, 
+        defaultValue: 100, 
         validate: {isInt: true}},
     radiusLimit: {
         type: DataTypes.FLOAT,

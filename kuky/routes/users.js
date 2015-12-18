@@ -10,7 +10,7 @@ var Ku_user = models.sequelize.models.Ku_user;
 var Ku = models.sequelize.models.Ku;
 var User_auth = models.sequelize.models.User_auth;
 
-var responseLimit = 10;
+var responseLimit = 70;
 
 /* POST log in */
 router.post('/login', function (req, res, next) {

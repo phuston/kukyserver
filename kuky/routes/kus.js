@@ -10,11 +10,10 @@ var Ku_user = models.sequelize.models.Ku_user;
 var Ku_comment_user = models.sequelize.models.Ku_comment_user;
 var Comment = models.sequelize.models.Comment;
 
-var responseLimit = 50;
-var dateLimitRecent = 50;
-var dateLimitHot = 50;
-var karmaThreshold = 3;
-
+var responseLimit = 70;
+var dateLimitRecent = 14;
+var dateLimitHot = 14;
+var karmaThreshold = 20;
 
 /*
 GET single ku by id
@@ -205,6 +204,9 @@ router.post('/compose', apiAuth.authenticate, function (req, res, next) {
                     }, {transaction: t});
                 });
             }).then(function (result) {
+                User.findById(result.dataValues.userId).then(function (user) {
+                    user.update({score: user.dataValues.score+10})
+                });
                 res.json(returnObject);
             }).catch(function (error) {
                 res.status(500).send(error);
@@ -279,6 +281,9 @@ router.post('/upvote', apiAuth.authenticate, function (req, res, next) {
                     Ku_user.destroy({
                         where: whereClause
                     }).then(function () {
+                        User.findById(req.body.userId).then(function (user) {
+                            user.update({score: user.dataValues.score-3});
+                        });
                         Ku.findById(req.body.kuId).then(function (ku) {
                             ku.decrement("upvotes");
                             ku.decrement("karma");
@@ -286,6 +291,9 @@ router.post('/upvote', apiAuth.authenticate, function (req, res, next) {
                         });
                     })
                 } else {
+                    User.findById(req.body.userId).then(function (user) {
+                        user.update({score: user.dataValues.score+3});
+                    });
                     Ku.findById(req.body.kuId).then(function (ku) {
                         ku.increment("upvotes");
                         ku.increment("karma");
@@ -326,6 +334,9 @@ router.post('/downvote', apiAuth.authenticate, function (req, res, next) {
                     Ku_user.destroy({
                         where: whereClause
                     }).then(function () {
+                        User.findById(req.body.userId).then(function (user) {
+                            user.update({score: user.dataValues.score-3});
+                        });
                         Ku.findById(req.body.kuId).then(function (ku) {
                             ku.decrement("downvotes");
                             ku.increment("karma");
@@ -333,6 +344,9 @@ router.post('/downvote', apiAuth.authenticate, function (req, res, next) {
                         })
                     })
                 } else {
+                    User.findById(req.body.userId).then(function (user) {
+                        user.update({score: user.dataValues.score+3});
+                    });
                     Ku.findById(req.body.kuId).then(function (ku) {
                         ku.increment("downvotes");
                         ku.decrement("karma");
@@ -341,32 +355,6 @@ router.post('/downvote', apiAuth.authenticate, function (req, res, next) {
                 }
             }).catch(function (error) {
                 res.status(500).send(error);
-            });
-        } else {
-            res.status(401).send('Unauthorized');
-        }
-    });
-});
-
-/*
-GET boolean check to see if user has already upvoted/downvoted a ku
-*/
-router.get('/:id/:userId/:vote', apiAuth.authenticate, function (req, res, next) {
-    var auth = req.get("authorization").split(' ')[1];
-    var auth_user = new Buffer(auth, 'base64').toString().split(':')[0];
-
-    User.findOne({where: {id: req.params.userId}}).then(function (user) {
-        if (user.dataValues.username == auth_user) {
-            var relationship = req.params.vote == 'upvote' ? 2 : 3;
-            Ku_user.findOne({
-                where: {
-                    userId: req.params.userId,
-                    kuId: req.params.id,
-                    relationship: relationship
-                }
-            }).then(function (ku_user) {
-                var hasVote = ku_user !== null;
-                res.json({"status": hasVote});
             });
         } else {
             res.status(401).send('Unauthorized');
