@@ -111,8 +111,6 @@ INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VAL
 INSERT INTO Ku_users(userId, kuId, relationship, createdAt, updatedAt) VALUES (2, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Expand your mind. Get;to work. Better yet, put your;feet up. Watch tv.", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Ku_users(userId, kuId, relationship, createdAt, updatedAt) VALUES (3, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Testicles are fun;Unless you get kicked in them;That fucking sucks balls", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users(userId, kuId, relationship, createdAt, updatedAt) VALUES (5, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("How many lightbulbs;Does it take to screw a shrink;Oh, got it backwards", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Ku_users(userId, kuId, relationship, createdAt, updatedAt) VALUES (1, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("fuck shit goddamnit;motherfucking shit ow ow;fuck shit fuck fuck fuck", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -123,8 +121,6 @@ INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VAL
 INSERT INTO Ku_users(userId, kuId, relationship, createdAt, updatedAt) VALUES (3, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("A headless horseman;Sits atop a big trapeze;Slowly passing gas", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO Ku_users(userId, kuId, relationship, createdAt, updatedAt) VALUES (2, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Kus(content, upvotes, downvotes, lat, lon, createdAt, updatedAt) VALUES ("Shit. It's nine. I'm late;Quickly I shave, cut my face;Goddammit. Sunday.", 0, 0, 42.1, -71.34, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-INSERT INTO Ku_users(userId, kuId, relationship, createdAt, updatedAt) VALUES (5, LAST_INSERT_ID(), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Create Comments
 INSERT INTO Comments(content, upvotes, downvotes, createdAt, updatedAt) VALUES ('I love you', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
