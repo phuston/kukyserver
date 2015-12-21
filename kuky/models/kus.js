@@ -1,5 +1,8 @@
 "use strict";
 
+/*
+Model for connecting ku info to database through Sequelize
+*/
 module.exports = function(sequelize, DataTypes) {
   var Ku = sequelize.define("Ku", {
     content: {

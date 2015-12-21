@@ -3,6 +3,9 @@
 var Ku = require("./kus");
 var User = require("./users");
 
+/*
+Model for connecting ku-user relationship info to database through Sequelize
+*/
 module.exports = function(sequelize, DataTypes) {
   var K_user = sequelize.define("Ku_user", {
     userId: {

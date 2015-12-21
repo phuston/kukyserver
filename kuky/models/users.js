@@ -1,5 +1,8 @@
 "use strict";
 
+/*
+Model for connecting user info to database through Sequelize
+*/
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
     username: {
@@ -8,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
     score: {
         type: DataTypes.INTEGER, 
         allowNull: false, 
-        defaultValue: 0, 
+        defaultValue: 100, 
         validate: {isInt: true}},
     radiusLimit: {
         type: DataTypes.FLOAT,

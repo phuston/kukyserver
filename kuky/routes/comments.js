@@ -61,7 +61,7 @@ router.post('/compose', apiAuth.authenticate, function (req, res, next) {
     var auth = req.get("authorization").split(' ')[1];
     var auth_user = new Buffer(auth, 'base64').toString().split(':')[0];
 
-    User.findOne({where: {id: req.body.userId}}).then(function (user) {
+    User.findById(req.body.userId).then(function (user) {
         if (user.dataValues.username == auth_user) {
         	var returnObject = {};
             var isOp;
@@ -93,6 +93,9 @@ router.post('/compose', apiAuth.authenticate, function (req, res, next) {
                         }, {transaction: t});
                     });
                 }).then(function (result) {
+                    User.findById(result.dataValues.userId).then(function (user) {
+                        user.update({score: user.dataValues.score+5})
+                    });
                     res.json(returnObject);
                 }).catch(function (error) {
                     res.status(500).send(error);
@@ -116,8 +119,9 @@ router.post('/compose', apiAuth.authenticate, function (req, res, next) {
 router.post('/upvote', apiAuth.authenticate, function (req, res, next) {
     var auth = req.get("authorization").split(' ')[1];
     var auth_user = new Buffer(auth, 'base64').toString().split(':')[0];
+    var added;
 
-    User.findOne({where: {id: req.body.userId}}).then(function (user) {
+    User.findById(req.body.userId).then(function (user) {
         if (user.dataValues.username == auth_user) {
             var whereClause = {
                 userId: req.body.userId,
@@ -133,12 +137,18 @@ router.post('/upvote', apiAuth.authenticate, function (req, res, next) {
                     Ku_comment_user.destroy({
                         where: whereClause
                     }).then(function () {
+                        User.findById(req.body.userId).then(function (user) {
+                            user.update({score: user.dataValues.score-3});
+                        });
                         Comment.findById(req.body.commentId).then(function (comment) {
                             comment.decrement('upvotes')
                             res.status(200).json({"Status": comment.dataValues.upvotes - 1 - comment.dataValues.downvotes})
                         });
                     })
                 } else {
+                    User.findById(req.body.userId).then(function (user) {
+                        user.update({score: user.dataValues.score+3});
+                    });
                     Comment.findById(req.body.commentId).then(function (comment) {
                         comment.increment('upvotes').then(function (comment) {
                                 res.status(200).json({"Status": comment.dataValues.upvotes + 1 - comment.dataValues.downvotes})
@@ -181,12 +191,18 @@ router.post('/downvote', apiAuth.authenticate, function (req, res, next) {
                     Ku_comment_user.destroy({
                         where: whereClause
                     }).then(function () {
+                        User.findById(req.body.userId).then(function (user) {
+                            user.update({score: user.dataValues.score-3})
+                        });
                         Comment.findById(req.body.commentId).then(function (comment) {
                             comment.decrement('downvotes');
                             res.status(200).json({"Status": comment.dataValues.upvotes - comment.dataValues.downvotes + 1})
                         });
                     })
                 } else {
+                    User.findById(req.body.userId).then(function (user) {
+                            user.update({score: user.dataValues.score-3})
+                        });
                     Comment.findById(req.body.commentId).then(function (comment) {
                         comment.increment('downvotes');
                         res.status(200).json({"Status": comment.dataValues.upvotes - comment.dataValues.downvotes - 1})
@@ -194,33 +210,6 @@ router.post('/downvote', apiAuth.authenticate, function (req, res, next) {
                 }
             }).catch(function (error) {
                 res.status(500).send(error);
-            });
-        } else {
-            res.status(401).send('Unauthorized');
-        }
-    });
-});
-
-/*
-GET boolean check to see if user has already upvoted/downvoted a ku
-*/
-router.get('/:kuId/:commentId/:userId/:vote', apiAuth.authenticate, function (req, res, next) {
-    var auth = req.get("authorization").split(' ')[1];
-    var auth_user = new Buffer(auth, 'base64').toString().split(':')[0];
-
-    User.findOne({where: {id: req.params.userId}}).then(function (user) {
-        if (user.dataValues.username == auth_user) {
-            var relationship = req.params.vote == 'upvote' ? 2 : 3;
-            Ku_comment_user.findOne({
-                where: {
-                    userId: req.params.userId,
-                    kuId: req.params.kuId,
-                    commentId: req.params.commentId,
-                    relationship: relationship
-                }
-            }).then(function (ku_comment_user) {
-                var hasVote = ku_comment_user !== null;
-                res.json({"status": hasVote});
             });
         } else {
             res.status(401).send('Unauthorized');
