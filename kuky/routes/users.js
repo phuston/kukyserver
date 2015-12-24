@@ -20,7 +20,8 @@ router.post('/login', function (req, res, next) {
         .createHash("sha256")
         .update(req.body.password)
         .digest('hex');
-    User_auth.findById(uname).then(function (user) {
+    console.log("HELLO");
+    User_auth.findOne({where: {username: uname}}).then(function (user) {
         userId = user.dataValues.userId;
         console.log(userId);
         if (user.dataValues.hashedPassword == hash) {
@@ -29,17 +30,19 @@ router.post('/login', function (req, res, next) {
                 {apiKey: newApi},
                 {where: {username: uname}}
             );
-            res.json({newKey: newApi, userId: userId, error: null});
+            res.status(200).json({newKey: newApi, userId: userId});
         } else {
-            res.status(200).json({newKey: null, userId: null, error: "User not found."});
+            res.status(401).json({error: "Password does not match username"});
         }
+    }).catch(function (error) {
+        res.status(404).json({error: "Username does not exist"})
     });
 })
 
 /* 
 POST a new user. Body looks like:
 {
-    "username": "test1234"
+    "username": "test1234",
     "password": "password"
 }
 */
